@@ -343,7 +343,7 @@ static void _drawCDKFselect (CDKOBJS *object, boolean Box GCC_UNUSED)
    }
 
    /* Draw in the entry field. */
-   drawCDKEntry (fselect->entryField, ObjOf (fselect->entryField)->box);
+   _drawCDKObject (fselect->entryField, ObjOf (fselect->entryField)->box);
 
    /* Draw in the scroll field. */
    drawMyScroller (fselect);
@@ -860,9 +860,11 @@ void setCDKFselectContents (CDKFSELECT *widget,
    setCDKFselectCurrentItem (widget, 0);
    cleanCDKEntry (entry);
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the widget. */
    eraseCDKFselect (widget);
    drawCDKFselect (widget, ObjOf (widget)->box);
+#endif
 }
 
 char **getCDKFselectContents (CDKFSELECT *widget,

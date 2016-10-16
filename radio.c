@@ -442,7 +442,7 @@ static void _moveCDKRadio (CDKOBJS *object,
    moveCursesWindow (radio->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (radio));
+   touchCDKWindow (WindowOf (radio));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

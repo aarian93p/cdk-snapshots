@@ -348,15 +348,18 @@ void refreshCDKScreen (CDKSCREEN *cdkscreen)
  * FIXME: this should be rewritten to use the panel library, so it would not
  * be necessary to touch the window to ensure that it covers other windows.
  */
+void touchCDKWindow (WINDOW *win){
+	touchwin (win);
+}
 void drawCDKWindow (WINDOW *win)
 {
-   touchwin (win);
-   wnoutrefresh (win);
+	touchCDKWindow (win);
+	wnoutrefresh (win);
 }
-
-void refreshCDKWindow (WINDOW *win){
+void refreshCDKWindow (WINDOW *win)
+{
 	drawCDKWindow (win);
-	doupdate();
+	doupdate ();
 }
 
 /*
@@ -427,7 +430,7 @@ void eraseCDKScreen (CDKSCREEN *cdkscreen)
    }
 
    /* Refresh the screen. */
-   wrefresh (cdkscreen->window);
+   wnoutrefresh (cdkscreen->window);
 }
 
 /*

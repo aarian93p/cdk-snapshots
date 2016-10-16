@@ -643,7 +643,7 @@ static void _moveCDKTemplate (CDKOBJS *object,
    moveCursesWindow (cdktemplate->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (cdktemplate));
+   touchCDKWindow (WindowOf (cdktemplate));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

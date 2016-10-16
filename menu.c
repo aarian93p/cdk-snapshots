@@ -504,7 +504,7 @@ static void _moveCDKMenu (CDKOBJS *object,
    }
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (menu));
+   touchCDKWindow (WindowOf (menu));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

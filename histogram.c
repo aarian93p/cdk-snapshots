@@ -547,7 +547,7 @@ static void _moveCDKHistogram (CDKOBJS *object,
    moveCursesWindow (widget->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (widget));
+   touchCDKWindow (WindowOf (widget));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

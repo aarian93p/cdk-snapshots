@@ -544,7 +544,7 @@ static void _moveCDKEntry (CDKOBJS *object,
    moveCursesWindow (entry->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (entry));
+   touchCDKWindow (WindowOf (entry));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

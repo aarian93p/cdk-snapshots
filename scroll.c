@@ -497,7 +497,7 @@ static void _moveCDKScroll (CDKOBJS *object,
    moveCursesWindow (scrollp->scrollbarWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (scrollp));
+   touchCDKWindow (WindowOf (scrollp));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

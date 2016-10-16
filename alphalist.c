@@ -258,7 +258,7 @@ static void _moveCDKAlphalist (CDKOBJS *object,
    moveCDKScroll (alphalist->scrollField, xplace, yplace, relative, FALSE);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (alphalist));
+   touchCDKWindow (WindowOf (alphalist));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -403,9 +403,11 @@ void setCDKAlphalistContents (CDKALPHALIST *widget, CDK_CSTRING *list, int listS
    setCDKAlphalistCurrentItem (widget, 0);
    cleanCDKEntry (entry);
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the widget. */
    eraseCDKAlphalist (widget);
    drawCDKAlphalist (widget, ObjOf (widget)->box);
+#endif
 }
 
 /*

@@ -621,7 +621,7 @@ static void _moveCDKMentry (CDKOBJS *object,
    moveCursesWindow (mentry->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (mentry));
+   touchCDKWindow (WindowOf (mentry));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -888,9 +888,11 @@ void setCDKMentryValue (CDKMENTRY *mentry, const char *newValue)
       mentry->currentCol        = len % mentry->fieldWidth;
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the widget. */
    drawCDKMentryField (mentry);
    doupdate();
+#endif
 }
 char *getCDKMentryValue (CDKMENTRY *mentry)
 {

@@ -479,8 +479,10 @@ void cleanCDKViewer (CDKVIEWER *viewer)
    viewer->currentTop  = 0;
    viewer->maxTopLine  = 0;
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the window. */
    drawCDKViewer (viewer, ObjOf (viewer)->box);
+#endif
 }
 
 static void PatternNotFound (CDKVIEWER *viewer, char *pattern)
@@ -995,7 +997,7 @@ static void _moveCDKViewer (CDKOBJS *object, int xplace, int yplace, boolean
    moveCursesWindow (viewer->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (viewer));
+   touchCDKWindow (WindowOf (viewer));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

@@ -377,7 +377,7 @@ static void _moveCDKItemlist (CDKOBJS *object,
    moveCursesWindow (itemlist->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (itemlist));
+   touchCDKWindow (WindowOf (itemlist));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -573,9 +573,11 @@ void setCDKItemlistValues (CDKITEMLIST *itemlist, CDK_CSTRING2 item, int count, 
 			 getbegx (itemlist->fieldWin));
       }
 
+#ifndef NO_CDK_AUTO_DRAW
       /* Draw the field. */
       eraseCDKItemlist (itemlist);
       drawCDKItemlist (itemlist, ObjOf (itemlist)->box);
+#endif
    }
 }
 chtype **getCDKItemlistValues (CDKITEMLIST *itemlist, int *size)

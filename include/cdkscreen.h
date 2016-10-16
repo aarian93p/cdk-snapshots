@@ -128,7 +128,7 @@ void lowerCDKObject (
 /*
  * This redraws a window, forcing it to the top of the stack.
  */
-void refreshCDKWindow (
+void touchCDKWindow (
 		WINDOW *	/* win */);
 
 /*

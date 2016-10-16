@@ -516,7 +516,7 @@ static void _moveCDKButtonbox (CDKOBJS *object,
    moveCursesWindow (buttonbox->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (buttonbox));
+   touchCDKWindow (WindowOf (buttonbox));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

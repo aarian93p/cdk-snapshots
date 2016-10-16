@@ -444,7 +444,7 @@ static void _moveCDKCalendar (CDKOBJS *object,
    moveCursesWindow (calendar->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (calendar));
+   touchCDKWindow (WindowOf (calendar));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
