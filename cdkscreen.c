@@ -235,6 +235,16 @@ void registerCDKObject (CDKSCREEN *screen, EObjectType cdktype, void *object)
 }
 
 /*
+ * This registers a CDK object with a screen.
+ */
+void reRegisterCDKObject (EObjectType cdktype, void *object)
+{
+   CDKOBJS *obj = (CDKOBJS *)object;
+
+   registerCDKObject ( obj->screen, cdktype, object);
+}
+
+/*
  * This removes an object from the CDK screen.
  */
 void unregisterCDKObject (EObjectType cdktype, void *object)

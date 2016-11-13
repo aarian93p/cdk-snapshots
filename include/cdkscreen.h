@@ -99,6 +99,13 @@ void registerCDKObject (
 		void *		/* object */);
 
 /*
+ * This function registers a CDK widget with it's former screen.
+ */
+void reRegisterCDKObject (
+		EObjectType	/* cdktype */,
+		void *		/* object */);
+
+/*
  * This unregisters a CDK widget from a screen.
  */
 void unregisterCDKObject (
