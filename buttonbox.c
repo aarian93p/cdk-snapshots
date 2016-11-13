@@ -325,7 +325,7 @@ static int _injectCDKButtonbox (CDKOBJS *object, chtype input)
       /* Should we call a post-process? */
       if (!complete && (PostProcessFuncOf (widget) != 0))
       {
-	 PostProcessFuncOf (widget) (vBUTTONBOX,
+	 complete = PostProcessFuncOf (widget) (vBUTTONBOX,
 				     widget,
 				     PostProcessDataOf (widget),
 				     input);
