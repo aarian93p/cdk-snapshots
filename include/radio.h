@@ -69,6 +69,7 @@ struct SRadio {
    int		widestItem;
    int		selectedItem;
    int		defItem;
+   int *	mode;
 };
 typedef struct SRadio CDKRADIO;
 
@@ -102,6 +103,28 @@ int activateCDKRadio (
  * This injects a single character into the widget.
  */
 #define injectCDKRadio(obj,input) injectCDKObject(obj,input,Int)
+
+/*
+ * This sets the modes of the items in the radio list. Currently
+ * there are only two: editable=0 and read-only=1
+ */
+void setCDKRadioModes (
+		CDKRADIO *	/* radio */,
+		int *		/* modes */);
+
+int *getCDKRadioModes (
+		CDKRADIO *	/* radio */);
+
+void setCDKRadioMode (
+		CDKRADIO *	/* radio */,
+		int		/* index */,
+		int		/* mode */);
+
+int getCDKRadioMode (
+		CDKRADIO *	/* radio */,
+		int		/* index */);
+
+
 
 /*
  * These set various attributes of the widget.

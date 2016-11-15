@@ -2,8 +2,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2014/11/05 10:06:58 $
- * $Revision: 1.139 $
+ * $Date: 2016/01/31 21:11:59 $
+ * $Revision: 1.141 $
  */
 
 /*
@@ -826,10 +826,12 @@ void setCDKTemplateValue (CDKTEMPLATE *cdktemplate, const char *newValue)
    int copychars        = 0;
    int x;
 
+   /* Erase the old value. */
+   cleanCDKTemplate (cdktemplate);
+
    /* Just to be sure, if let's make sure the new value isn't null. */
    if (newValue == 0)
    {
-      cleanCDKTemplate (cdktemplate);
       return;
    }
 
@@ -837,8 +839,7 @@ void setCDKTemplateValue (CDKTEMPLATE *cdktemplate, const char *newValue)
    len = (int)strlen (newValue);
    copychars = MINIMUM (len, cdktemplate->fieldWidth);
 
-   /* OK, erase the old value, and copy in the new value. */
-   cdktemplate->info[0] = '\0';
+   /* OK, copy in the new value. */
    strncpy (cdktemplate->info, newValue, (size_t) copychars);
 
    /* Use the function which handles the input of the characters. */
@@ -885,8 +886,10 @@ boolean getCDKTemplateBox (CDKTEMPLATE *cdktemplate)
  */
 void cleanCDKTemplate (CDKTEMPLATE *cdktemplate)
 {
+   if (cdktemplate->fieldWidth > 0)
+      memset (cdktemplate->info, 0, (size_t) cdktemplate->fieldWidth);
+
    /* *INDENT-EQLS* */
-   cdktemplate->info[0]   = '\0';
    cdktemplate->screenPos = 0;
    cdktemplate->infoPos   = 0;
    cdktemplate->platePos  = 0;

@@ -1,5 +1,5 @@
 /*
- * $Id: button.h,v 1.11 2012/03/21 21:15:30 tom Exp $
+ * $Id: button.h,v 1.13 2016/01/27 19:34:48 Aarian P. Aleahmad Exp $
  */
 
 #ifndef CDKINCLUDES
@@ -18,7 +18,7 @@
 #endif
 
 /*
- * Changes 2002-2004,2012 copyright Thomas E. Dickey
+ * Changes 2002-2012,2016 copyright Thomas E. Dickey
  *
  * Copyright 1999, Grant Edwards
  * All rights reserved.
@@ -55,6 +55,11 @@
 /*
  * Declare any definitions you need to make.
  */
+typedef struct SButton CDKBUTTON;
+
+typedef void (*tButtonCallback)(struct SButton *button);
+
+
 
 /*
  * Declare the CDK label structure.
@@ -65,7 +70,7 @@ struct SButton {
    WINDOW *	win;
    WINDOW *	shadowWin;
    chtype *	info;
-   void         (*callback)(struct SButton *button);
+   tButtonCallback callback;
    int		infoLen;
    int		infoPos;
    int		boxWidth;
@@ -75,11 +80,31 @@ struct SButton {
    int		rows;
    EExitType	exitType;
    boolean	shadow;
+   chtype	highlight;
+   void *	callbackData;
 };
 
-typedef struct SButton CDKBUTTON;
+/*
+ * This sets the callback function of the button's argument.
+ */
+#define setCDKButtonCBArgs(button, argPtr) \
+		((button)->callbackData = (void*)(argPtr))
 
-typedef void (*tButtonCallback)(struct SButton *button);
+#define getCDKButtonCBArgs(button, argType) \
+		((argType) ((button)->callbackData))
+
+
+/*
+ * This sets the button's highlight mode.
+ */
+#define CDKButtonHighlightOf(button) \
+	       ((button)->highlight)
+
+#define setCDKButtonHighlight(button, highlightMode) \
+	       (CDKButtonHighlightOf(button) = (highlightMode))
+
+#define getCDKButtonHighlight(button) \
+	       CDKButtonHighlightOf(button)
 
 /*
  * This creates a new CDK button widget.
@@ -115,7 +140,7 @@ void setCDKButton (
 		boolean		/* Box */);
 
 /*
- * This sets the contents of the label.
+ * This sets the contents of the button.
  */
 void setCDKButtonMessage (
 		CDKBUTTON *	/* button */,
@@ -135,7 +160,7 @@ boolean getCDKButtonBox (
 		CDKBUTTON *	/* button */);
 
 /*
- * This draws the label.
+ * This draws the button.
  */
 #define drawCDKButton(obj,Box) drawCDKObject(obj,Box)
 
