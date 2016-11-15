@@ -290,6 +290,7 @@ static int _injectCDKCalendar (CDKOBJS *object, chtype input)
 
    /* Refresh the widget field. */
    drawCDKCalendarField (widget);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -443,7 +444,7 @@ static void _moveCDKCalendar (CDKOBJS *object,
    moveCursesWindow (calendar->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (calendar));
+   touchCDKWindow (WindowOf (calendar));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -487,7 +488,7 @@ static void _drawCDKCalendar (CDKOBJS *object, boolean Box)
 		 calendar->DayName + src, HORIZONTAL, 0, colLen);
    }
 
-   wrefresh (calendar->win);
+   wnoutrefresh (calendar->win);
 
    drawCDKCalendarField (calendar);
 }
@@ -546,7 +547,7 @@ static void drawCDKCalendarField (CDKCALENDAR *calendar)
 	 day++;
       }
    }
-   wrefresh (calendar->fieldWin);
+   wnoutrefresh (calendar->fieldWin);
 
    /* Draw the month in. */
    if (calendar->labelWin != 0)
@@ -564,12 +565,12 @@ static void drawCDKCalendarField (CDKCALENDAR *calendar)
 		 temp, HORIZONTAL, 0, yearLen);
 
       wmove (calendar->labelWin, 0, 0);
-      wrefresh (calendar->labelWin);
+      wnoutrefresh (calendar->labelWin);
    }
    else if (save_y >= 0)
    {
       wmove (InputWindowOf (calendar), save_y, save_x);
-      wrefresh (InputWindowOf (calendar));
+      wnoutrefresh (InputWindowOf (calendar));
    }
 }
 
@@ -929,6 +930,7 @@ static void incrementCalendarDay (CDKCALENDAR *calendar, int adjust)
    {
       calendar->day += adjust;
       drawCDKCalendarField (calendar);
+      doupdate();
    }
 }
 
@@ -973,6 +975,7 @@ static void decrementCalendarDay (CDKCALENDAR *calendar, int adjust)
    {
       calendar->day -= adjust;
       drawCDKCalendarField (calendar);
+      doupdate();
    }
 }
 

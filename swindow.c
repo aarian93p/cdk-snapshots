@@ -310,8 +310,11 @@ void addCDKSwindow (CDKSWINDOW *swindow, const char *list, int insertPos)
       }
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Draw in the list. */
    drawCDKSwindowList (swindow, ObjOf (swindow)->box);
+   doupdate();
+#endif
 }
 
 /*
@@ -351,8 +354,10 @@ void jumpToLineCDKSwindow (CDKSWINDOW *swindow, int line)
       swindow->currentTop = 0;
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the window. */
    drawCDKSwindow (swindow, ObjOf (swindow)->box);
+#endif
 }
 
 /*
@@ -375,8 +380,10 @@ void cleanCDKSwindow (CDKSWINDOW *swindow)
    swindow->currentTop  = 0;
    swindow->maxTopLine  = 0;
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the window. */
    drawCDKSwindow (swindow, ObjOf (swindow)->box);
+#endif
 }
 
 /*
@@ -467,8 +474,11 @@ void trimCDKSwindow (CDKSWINDOW *swindow, int begin, int end)
       swindow->currentTop = swindow->maxTopLine;
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the list. */
    drawCDKSwindowList (swindow, ObjOf (swindow)->box);
+   doupdate();
+#endif
 }
 
 /*
@@ -708,6 +718,7 @@ static int _injectCDKSwindow (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKSwindowList (widget, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -755,7 +766,7 @@ static void _moveCDKSwindow (CDKOBJS *object,
    moveCursesWindow (swindow->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (swindow));
+   touchCDKWindow (WindowOf (swindow));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -785,7 +796,7 @@ static void _drawCDKSwindow (CDKOBJS *object, boolean Box)
 
    drawCdkTitle (swindow->win, object);
 
-   wrefresh (swindow->win);
+   wnoutrefresh (swindow->win);
 
    /* Draw in the list. */
    drawCDKSwindowList (swindow, Box);
@@ -837,7 +848,7 @@ static void drawCDKSwindowList (CDKSWINDOW *swindow, boolean Box GCC_UNUSED)
       }
    }
 
-   wrefresh (swindow->fieldWin);
+   wnoutrefresh (swindow->fieldWin);
 }
 
 /*
@@ -1021,7 +1032,7 @@ void saveCDKSwindowInformation (CDKSWINDOW *swindow)
    /* Clean up and exit. */
    destroyCDKEntry (entry);
    eraseCDKScreen (ScreenOf (swindow));
-   drawCDKScreen (ScreenOf (swindow));
+   refreshCDKScreen (ScreenOf (swindow));
 }
 
 /*

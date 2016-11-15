@@ -65,7 +65,7 @@ void boxWindow (WINDOW *window, chtype attr)
    (void)mvwaddch (window, tly, brx, ACS_URCORNER | attr);
    (void)mvwaddch (window, bry, tlx, ACS_LLCORNER | attr);
    (void)mvwaddch (window, bry, brx, ACS_LRCORNER | attr);
-   (void)wrefresh (window);
+   (void)wnoutrefresh (window);
 }
 
 /*
@@ -127,7 +127,7 @@ void attrbox (WINDOW *win,
    }
    if (count != 0)
    {
-      wrefresh (win);
+      wnoutrefresh (win);
    }
 }
 
@@ -230,7 +230,7 @@ void drawShadow (WINDOW *shadowWin)
       (void)mvwaddch (shadowWin, 0, x_hi, ACS_URCORNER | A_DIM);
       (void)mvwaddch (shadowWin, y_hi, 0, ACS_LLCORNER | A_DIM);
       (void)mvwaddch (shadowWin, y_hi, x_hi, ACS_LRCORNER | A_DIM);
-      wrefresh (shadowWin);
+      wnoutrefresh (shadowWin);
    }
 }
 

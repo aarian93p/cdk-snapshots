@@ -479,8 +479,10 @@ void cleanCDKViewer (CDKVIEWER *viewer)
    viewer->currentTop  = 0;
    viewer->maxTopLine  = 0;
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the window. */
    drawCDKViewer (viewer, ObjOf (viewer)->box);
+#endif
 }
 
 static void PatternNotFound (CDKVIEWER *viewer, char *pattern)
@@ -555,6 +557,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
 
 	       /* Redraw the buttons. */
 	       drawCDKViewerButtons (widget);
+	       doupdate();
 	    }
 	    break;
 
@@ -572,6 +575,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
 
 	       /* Redraw the buttons. */
 	       drawCDKViewerButtons (widget);
+	       doupdate();
 	    }
 	    break;
 
@@ -793,6 +797,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
       if (REFRESH)
       {
 	 drawCDKViewerInfo (widget);
+	 doupdate();
       }
    }
 }
@@ -992,7 +997,7 @@ static void _moveCDKViewer (CDKOBJS *object, int xplace, int yplace, boolean
    moveCursesWindow (viewer->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (viewer));
+   touchCDKWindow (WindowOf (viewer));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -1018,7 +1023,7 @@ static void _drawCDKViewer (CDKOBJS *object, boolean Box)
    if (Box)
    {
       drawObjBox (viewer->win, ObjOf (viewer));
-      wrefresh (viewer->win);
+      wnoutrefresh (viewer->win);
    }
 
    /* Draw the info in the viewer. */
@@ -1065,7 +1070,7 @@ static void drawCDKViewerButtons (CDKVIEWER *viewer)
    }
 
    /* Refresh the window. */
-   wrefresh (viewer->win);
+   wnoutrefresh (viewer->win);
 }
 
 /*
@@ -1220,7 +1225,7 @@ static void drawCDKViewerInfo (CDKVIEWER *viewer)
    if (ObjOf (viewer)->box)
    {
       drawObjBox (viewer->win, ObjOf (viewer));
-      wrefresh (viewer->win);
+      wnoutrefresh (viewer->win);
    }
 
    /* Draw the separation line. */

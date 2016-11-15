@@ -262,6 +262,7 @@ static int _injectCDKEntry (CDKOBJS *object, chtype input)
 
    /* Refresh the widget field. */
    drawCDKEntryField (widget);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -481,6 +482,7 @@ static int _injectCDKEntry (CDKOBJS *object, chtype input)
 	    (widget->callbackfn) (widget, input);
 	    break;
 	 }
+	 doupdate();
       }
 
       /* Should we do a post-process? */
@@ -542,7 +544,7 @@ static void _moveCDKEntry (CDKOBJS *object,
    moveCursesWindow (entry->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (entry));
+   touchCDKWindow (WindowOf (entry));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -595,6 +597,7 @@ static void CDKEntryCallBack (CDKENTRY *entry, chtype character)
 
       /* Update the entry field. */
       drawCDKEntryField (entry);
+      doupdate();
    }
 }
 
@@ -641,13 +644,13 @@ static void _drawCDKEntry (CDKOBJS *object, boolean Box)
 
    drawCdkTitle (entry->win, object);
 
-   wrefresh (entry->win);
+   wnoutrefresh (entry->win);
 
    /* Draw in the label to the widget. */
    if (entry->labelWin != 0)
    {
       writeChtype (entry->labelWin, 0, 0, entry->label, HORIZONTAL, 0, entry->labelLen);
-      wrefresh (entry->labelWin);
+      wnoutrefresh (entry->labelWin);
    }
 
    drawCDKEntryField (entry);
@@ -691,7 +694,7 @@ static void drawCDKEntryField (CDKENTRY *entry)
       wmove (entry->fieldWin, 0, entry->screenCol);
    }
 
-   wrefresh (entry->fieldWin);
+   wnoutrefresh (entry->fieldWin);
 }
 
 /*
@@ -932,6 +935,7 @@ static void _refreshDataCDKEntry (CDKOBJS *object)
       }
       entry->screenCol = strlen (entry->info);
       drawCDKEntryField (entry);
+      doupdate();
    }
 }
 

@@ -156,9 +156,11 @@ void setCDKLabelMessage (CDKLABEL *label, CDK_CSTRING2 info, int infoSize)
 					 label->infoPos[x]);
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the label widget. */
    eraseCDKLabel (label);
    drawCDKLabel (label, ObjOf (label)->box);
+#endif
 }
 chtype **getCDKLabelMessage (CDKLABEL *label, int *size)
 {
@@ -225,7 +227,7 @@ static void _drawCDKLabel (CDKOBJS *object, boolean Box GCC_UNUSED)
    }
 
    /* Refresh the window. */
-   wrefresh (label->win);
+   wnoutrefresh (label->win);
 }
 
 /*
@@ -282,7 +284,7 @@ static void _moveCDKLabel (CDKOBJS *object,
    moveCursesWindow (label->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (label));
+   touchCDKWindow (WindowOf (label));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

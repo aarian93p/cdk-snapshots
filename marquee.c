@@ -281,7 +281,7 @@ static void _moveCDKMarquee (CDKOBJS *object,
    moveCursesWindow (widget->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (widget));
+   touchCDKWindow (WindowOf (widget));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -317,7 +317,7 @@ static void _drawCDKMarquee (CDKOBJS *object, boolean Box)
    }
 
    /* Refresh the window. */
-   wrefresh (widget->win);
+   wnoutrefresh (widget->win);
 }
 
 /*

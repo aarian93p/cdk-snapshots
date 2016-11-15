@@ -163,6 +163,7 @@ int activateCDKItemlist (CDKITEMLIST *itemlist, chtype *actions)
    /* Draw the widget. */
    drawCDKItemlist (itemlist, ObjOf (itemlist)->box);
    drawCDKItemlistField (itemlist, TRUE);
+   doupdate();
 
    if (actions == 0)
    {
@@ -218,6 +219,7 @@ static int _injectCDKItemlist (CDKOBJS *object, chtype input)
 
    /* Draw the widget field. */
    drawCDKItemlistField (widget, TRUE);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -325,6 +327,7 @@ static int _injectCDKItemlist (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKItemlistField (widget, TRUE);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -374,7 +377,7 @@ static void _moveCDKItemlist (CDKOBJS *object,
    moveCursesWindow (itemlist->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (itemlist));
+   touchCDKWindow (WindowOf (itemlist));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -416,7 +419,7 @@ static void _drawCDKItemlist (CDKOBJS *object, int Box)
 		   chlen (itemlist->label));
    }
 
-   wrefresh (itemlist->win);
+   wnoutrefresh (itemlist->win);
 
    /* Draw in the field. */
    drawCDKItemlistField (itemlist, FALSE);
@@ -472,7 +475,7 @@ void drawCDKItemlistField (CDKITEMLIST *itemlist, boolean highlight)
    }
 
    /* Redraw the field window. */
-   wrefresh (itemlist->fieldWin);
+   wnoutrefresh (itemlist->fieldWin);
 }
 
 /*
@@ -570,9 +573,11 @@ void setCDKItemlistValues (CDKITEMLIST *itemlist, CDK_CSTRING2 item, int count, 
 			 getbegx (itemlist->fieldWin));
       }
 
+#ifndef NO_CDK_AUTO_DRAW
       /* Draw the field. */
       eraseCDKItemlist (itemlist);
       drawCDKItemlist (itemlist, ObjOf (itemlist)->box);
+#endif
    }
 }
 chtype **getCDKItemlistValues (CDKITEMLIST *itemlist, int *size)
@@ -639,6 +644,7 @@ static void _focusCDKItemlist (CDKOBJS *object)
    CDKITEMLIST *itemlist = (CDKITEMLIST *)object;
 
    drawCDKItemlistField (itemlist, TRUE);
+   doupdate();
 }
 
 static void _unfocusCDKItemlist (CDKOBJS *object)
@@ -646,6 +652,7 @@ static void _unfocusCDKItemlist (CDKOBJS *object)
    CDKITEMLIST *itemlist = (CDKITEMLIST *)object;
 
    drawCDKItemlistField (itemlist, FALSE);
+   doupdate();
 }
 
 #if 0

@@ -335,6 +335,7 @@ static int _injectCDKButtonbox (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKButtonboxButtons (widget);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -458,7 +459,7 @@ void drawCDKButtonboxButtons (CDKBUTTONBOX *buttonbox)
    }
    if (cur_row >= 0 && cur_col >= 0)
       wmove (buttonbox->win, cur_row, cur_col);
-   wrefresh (buttonbox->win);
+   wnoutrefresh (buttonbox->win);
 }
 
 /*
@@ -515,7 +516,7 @@ static void _moveCDKButtonbox (CDKOBJS *object,
    moveCursesWindow (buttonbox->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (buttonbox));
+   touchCDKWindow (WindowOf (buttonbox));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
