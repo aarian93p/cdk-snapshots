@@ -382,10 +382,6 @@ void refreshCDKScreen (CDKSCREEN *cdkscreen)
 	    if (obj->hasFocus && focused < 0)
 	       focused = x;
 	 }
-	 else
-	 {
-	    obj->fn->eraseObj (obj);
-	 }
       }
    }
 
