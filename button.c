@@ -3,9 +3,8 @@
 #include <limits.h>
 
 /*
- * $Author: tom $
- * $Coauthor: Aarian P. Aleahmad $
- * $Date: 2016/01/27 19:34:48 $
+ * $Author: Aarian.P.Aleahmad $
+ * $Date: 2016/01/31 20:32:25 $
  * $Revision: 1.38 $
  */
 

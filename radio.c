@@ -3,8 +3,8 @@
 
 /*
  * $Author: Aarian P. Aleahmad $
- * $Date: 2016/11/13 06:50:20 $
- * $Revision: 1.143 $
+ * $Date: 2016/01/31 22:16:21 $
+ * $Revision: 1.145 $
  */
 
 /*
@@ -566,6 +566,10 @@ static void drawCDKRadioList (CDKRADIO *radio, boolean Box)
    if (Box)
    {
       drawObjBox (radio->win, ObjOf (radio));
+   }
+   else
+   {
+      touchwin (radio->win);
    }
 
    fixCursorPosition (radio);
