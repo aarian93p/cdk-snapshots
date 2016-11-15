@@ -225,7 +225,7 @@ static void _drawCDKLabel (CDKOBJS *object, boolean Box GCC_UNUSED)
    }
 
    /* Refresh the window. */
-   wrefresh (label->win);
+   wnoutrefresh (label->win);
 }
 
 /*

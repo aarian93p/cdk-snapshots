@@ -656,7 +656,7 @@ static void _drawCDKHistogram (CDKOBJS *object, boolean Box)
    }
 
    /* Refresh the window. */
-   wrefresh (widget->win);
+   wnoutrefresh (widget->win);
 }
 
 /*

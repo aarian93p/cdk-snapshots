@@ -243,7 +243,7 @@ static void _drawCDKButton (CDKOBJS *object, boolean Box GCC_UNUSED)
       drawObjBox (button->win, ObjOf (button));
    }
    drawCDKButtonText (button);
-   wrefresh (button->win);
+   wnoutrefresh (button->win);
 }
 
 /*

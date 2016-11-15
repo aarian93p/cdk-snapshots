@@ -141,6 +141,7 @@ int activateCDKMenu (CDKMENU *menu, chtype *actions)
 
    /* Highlight the current title and window. */
    drawCDKMenuSubwin (menu);
+   doupdate();
 
    /* If the input string is null, this is an interactive activate. */
    if (actions == 0)
@@ -247,9 +248,9 @@ static void withinSubmenu (CDKMENU *menu, int step)
 	 /* Draw the new sub-title. */
 	 selectItem (menu, menu->currentSubtitle, 0);
 
-	 wrefresh (menu->pullWin[menu->currentTitle]);
+	 wnoutrefresh (menu->pullWin[menu->currentTitle]);
       }
-
+ 	 doupdate();
       ObjOf (menu)->inputWindow = menu->titleWin[menu->currentTitle];
    }
 }
@@ -270,6 +271,7 @@ static void acrossSubmenus (CDKMENU *menu, int step)
 
       /* Draw the new menu sub-window. */
       drawCDKMenuSubwin (menu);
+      doupdate();
       ObjOf (menu)->inputWindow = menu->titleWin[menu->currentTitle];
    }
 }
@@ -354,6 +356,7 @@ static int _injectCDKMenu (CDKOBJS *object, chtype input)
 	    refreshCDKScreen (ScreenOf (widget));
 	    break;
 	 }
+	 doupdate();
       }
 
       /* Should we call a post-process? */
@@ -415,14 +418,14 @@ void drawCDKMenuSubwin (CDKMENU *menu)
    }
 
    selectItem (menu, menu->currentSubtitle, x0);
-   wrefresh (menu->pullWin[menu->currentTitle]);
+   wnoutrefresh (menu->pullWin[menu->currentTitle]);
 
    /* Highlight the title. */
    writeChtypeAttrib (menu->titleWin[menu->currentTitle],
 		      0, 0, menu->title[menu->currentTitle],
 		      menu->titleAttr, HORIZONTAL, 0,
 		      menu->titleLen[menu->currentTitle]);
-   wrefresh (menu->titleWin[menu->currentTitle]);
+   wnoutrefresh (menu->titleWin[menu->currentTitle]);
 }
 
 /*
@@ -434,7 +437,7 @@ void eraseCDKMenuSubwin (CDKMENU *menu)
 
    /* Redraw the sub-menu title. */
    drawTitle (menu, menu->currentTitle);
-   wrefresh (menu->titleWin[menu->currentTitle]);
+   wnoutrefresh (menu->titleWin[menu->currentTitle]);
 }
 
 /*
@@ -449,7 +452,7 @@ static void _drawCDKMenu (CDKOBJS *object, boolean Box GCC_UNUSED)
    for (x = 0; x < menu->menuItems; x++)
    {
       drawTitle (menu, x);
-      wrefresh (menu->titleWin[x]);
+      wnoutrefresh (menu->titleWin[x]);
    }
 }
 
@@ -574,9 +577,9 @@ static void _eraseCDKMenu (CDKOBJS *object)
       for (x = 0; x < menu->menuItems; x++)
       {
 	 werase (menu->titleWin[x]);
-	 wrefresh (menu->titleWin[x]);
+	 wnoutrefresh (menu->titleWin[x]);
 	 werase (menu->pullWin[x]);
-	 wrefresh (menu->pullWin[x]);
+	 wnoutrefresh (menu->pullWin[x]);
       }
    }
 }
@@ -642,7 +645,7 @@ static void cleanUpMenu (CDKMENU *menu)
 {
    /* Erase the sub-menu. */
    eraseCDKMenuSubwin (menu);
-   wrefresh (menu->pullWin[menu->currentTitle]);
+   wnoutrefresh (menu->pullWin[menu->currentTitle]);
 
    /* Refresh the screen. */
    refreshCDKScreen (ScreenOf (menu));

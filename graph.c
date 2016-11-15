@@ -496,7 +496,7 @@ static void _drawCDKGraph (CDKOBJS *object, boolean Box)
    /* If the count is zero, then there aren't any points. */
    if (widget->count == 0)
    {
-      wrefresh (widget->win);
+      wnoutrefresh (widget->win);
       return;
    }
    spacing = (widget->boxWidth - TITLE_LM) / widget->count;
@@ -540,7 +540,7 @@ static void _drawCDKGraph (CDKOBJS *object, boolean Box)
    (void)mvwaddch (widget->win, widget->boxHeight - 3, widget->boxWidth, ACS_URCORNER);
 
    /* Refresh and lets see 'er. */
-   wrefresh (widget->win);
+   wnoutrefresh (widget->win);
 }
 
 /*

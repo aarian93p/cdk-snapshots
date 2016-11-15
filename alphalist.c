@@ -283,7 +283,7 @@ static void _moveCDKAlphalist (CDKOBJS *object,
 static void drawMyScroller (CDKALPHALIST *widget)
 {
    SaveFocus (widget);
-   drawCDKScroll (widget->scrollField, ObjOf (widget->scrollField)->box);
+   MethodOf(widget)->drawObj (ObjOf(widget->scrollField), ObjOf (widget->scrollField)->box);
    RestoreFocus (widget);
 }
 
@@ -308,7 +308,8 @@ static void _drawCDKAlphalist (CDKOBJS *obj, boolean Box GCC_UNUSED)
    }
 
    /* Draw in the entry field. */
-   drawCDKEntry (alphalist->entryField, ObjOf (alphalist->entryField)->box);
+   MethodOf(alphalist->entryField)->drawObj
+   	   (ObjOf(alphalist->entryField), ObjOf (alphalist->entryField)->box);
 
    /* Draw in the scroll field. */
    drawMyScroller (alphalist);
@@ -713,6 +714,7 @@ static int preProcessEntryField (EObjectType cdktype GCC_UNUSED, void
 	    setCDKScrollPosition (scrollp, Index);
 	 }
 	 drawMyScroller (alphalist);
+	 doupdate();
       }
       else
       {
@@ -728,6 +730,7 @@ static int preProcessEntryField (EObjectType cdktype GCC_UNUSED, void
    {
       setCDKScrollPosition (scrollp, 0);
       drawMyScroller (alphalist);
+      doupdate();
    }
    return result;
 }

@@ -318,7 +318,7 @@ static void _moveCDKFselect (CDKOBJS *object,
 static void drawMyScroller (CDKFSELECT *widget)
 {
    SaveFocus (widget);
-   drawCDKScroll (widget->scrollField, ObjOf (widget->scrollField)->box);
+   MethodOf (widget)->drawObj (ObjOf (widget->scrollField), ObjOf (widget->scrollField)->box);
    RestoreFocus (widget);
 }
 
@@ -450,6 +450,7 @@ static int _injectCDKFselect (CDKOBJS *object, chtype input)
 
       /* Redraw the scrolling list. */
       drawMyScroller (fselect);
+      doupdate();
    }
 
    if (!complete)
@@ -1259,6 +1260,7 @@ static int completeFilenameCB (EObjectType objectType GCC_UNUSED,
 	    }
 	 }
 	 drawMyScroller (fselect);
+	 doupdate();
 
 	 /* Ok, we found a match, is the next item similar? */
 	 if (Index + 1 < fselect->fileCounter &&

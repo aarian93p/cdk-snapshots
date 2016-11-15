@@ -313,7 +313,7 @@ static void _drawCDKMarquee (CDKOBJS *object, boolean Box)
    }
 
    /* Refresh the window. */
-   wrefresh (widget->win);
+   wnoutrefresh (widget->win);
 }
 
 /*

@@ -555,6 +555,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
 
 	       /* Redraw the buttons. */
 	       drawCDKViewerButtons (widget);
+	       doupdate();
 	    }
 	    break;
 
@@ -572,6 +573,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
 
 	       /* Redraw the buttons. */
 	       drawCDKViewerButtons (widget);
+	       doupdate();
 	    }
 	    break;
 
@@ -793,6 +795,7 @@ int activateCDKViewer (CDKVIEWER *widget, chtype *actions GCC_UNUSED)
       if (REFRESH)
       {
 	 drawCDKViewerInfo (widget);
+	 doupdate();
       }
    }
 }
@@ -1018,7 +1021,7 @@ static void _drawCDKViewer (CDKOBJS *object, boolean Box)
    if (Box)
    {
       drawObjBox (viewer->win, ObjOf (viewer));
-      wrefresh (viewer->win);
+      wnoutrefresh (viewer->win);
    }
 
    /* Draw the info in the viewer. */
@@ -1065,7 +1068,7 @@ static void drawCDKViewerButtons (CDKVIEWER *viewer)
    }
 
    /* Refresh the window. */
-   wrefresh (viewer->win);
+   wnoutrefresh (viewer->win);
 }
 
 /*
@@ -1220,7 +1223,7 @@ static void drawCDKViewerInfo (CDKVIEWER *viewer)
    if (ObjOf (viewer)->box)
    {
       drawObjBox (viewer->win, ObjOf (viewer));
-      wrefresh (viewer->win);
+      wnoutrefresh (viewer->win);
    }
 
    /* Draw the separation line. */

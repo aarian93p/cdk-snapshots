@@ -312,6 +312,7 @@ void addCDKSwindow (CDKSWINDOW *swindow, const char *list, int insertPos)
 
    /* Draw in the list. */
    drawCDKSwindowList (swindow, ObjOf (swindow)->box);
+   doupdate();
 }
 
 /*
@@ -469,6 +470,7 @@ void trimCDKSwindow (CDKSWINDOW *swindow, int begin, int end)
 
    /* Redraw the list. */
    drawCDKSwindowList (swindow, ObjOf (swindow)->box);
+   doupdate();
 }
 
 /*
@@ -708,6 +710,7 @@ static int _injectCDKSwindow (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKSwindowList (widget, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -785,7 +788,7 @@ static void _drawCDKSwindow (CDKOBJS *object, boolean Box)
 
    drawCdkTitle (swindow->win, object);
 
-   wrefresh (swindow->win);
+   wnoutrefresh (swindow->win);
 
    /* Draw in the list. */
    drawCDKSwindowList (swindow, Box);
@@ -837,7 +840,7 @@ static void drawCDKSwindowList (CDKSWINDOW *swindow, boolean Box GCC_UNUSED)
       }
    }
 
-   wrefresh (swindow->fieldWin);
+   wnoutrefresh (swindow->fieldWin);
 }
 
 /*

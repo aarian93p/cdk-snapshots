@@ -295,6 +295,7 @@ static int _injectCDKSelection (CDKOBJS *object, chtype input)
 
    /* Draw the widget list */
    drawCDKSelectionList (selection, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -418,6 +419,7 @@ static int _injectCDKSelection (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKSelectionList (selection, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 

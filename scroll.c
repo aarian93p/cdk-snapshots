@@ -290,6 +290,7 @@ static int _injectCDKScroll (CDKOBJS *object, chtype input)
 
    /* Draw the scrolling list */
    drawCDKScrollList (myself, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -394,6 +395,7 @@ static int _injectCDKScroll (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKScrollList (myself, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -623,7 +625,7 @@ static void drawCDKScrollList (CDKSCROLL *scrollp, boolean Box)
    }
 
    /* Refresh the window. */
-   wrefresh (scrollp->win);
+   wnoutrefresh (scrollp->win);
 }
 
 /*

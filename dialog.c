@@ -389,7 +389,7 @@ static void _drawCDKDialog (CDKOBJS *object, boolean Box)
    /* Draw in the buttons. */
    drawCDKDialogButtons (dialog);
 
-   wrefresh (dialog->win);
+   wnoutrefresh (dialog->win);
 }
 
 /*

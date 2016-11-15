@@ -337,9 +337,10 @@ void lowerCDKObject (EObjectType cdktype, void *object)
 /*
  * This calls refreshCDKScreen. (made consistent with widgets)
  */
-void drawCDKScreen (CDKSCREEN *cdkscreen)
+void refreshCDKScreen (CDKSCREEN *cdkscreen)
 {
-   refreshCDKScreen (cdkscreen);
+   drawCDKScreen (cdkscreen);
+   doupdate();
 }
 
 /*
@@ -347,23 +348,28 @@ void drawCDKScreen (CDKSCREEN *cdkscreen)
  * FIXME: this should be rewritten to use the panel library, so it would not
  * be necessary to touch the window to ensure that it covers other windows.
  */
-void refreshCDKWindow (WINDOW *win)
+void drawCDKWindow (WINDOW *win)
 {
    touchwin (win);
-   wrefresh (win);
+   wnoutrefresh (win);
+}
+
+void refreshCDKWindow (WINDOW *win){
+	drawCDKWindow (win);
+	doupdate();
 }
 
 /*
  * This refreshes all the objects in the screen.
  */
-void refreshCDKScreen (CDKSCREEN *cdkscreen)
+void drawCDKScreen (CDKSCREEN *cdkscreen)
 {
    int objectCount = cdkscreen->objectCount;
    int x;
    int focused = -1;
    int visible = -1;
 
-   refreshCDKWindow (cdkscreen->window);
+   drawCDKWindow (cdkscreen->window);
 
    /* We erase all the invisible objects, then only
     * draw it all back, so that the objects

@@ -137,7 +137,7 @@ void scroller_FixCursorPosition (CDKSCROLLER *scroller)
    int xpos = SCREEN_XPOS (scroller, 0) + scrollbarAdj;
 
    wmove (InputWindowOf (scroller), ypos, xpos);
-   wrefresh (InputWindowOf (scroller));
+   wnoutrefresh (InputWindowOf (scroller));
 }
 
 void scroller_SetPosition (CDKSCROLLER *scroller, int item)

@@ -234,6 +234,7 @@ int activateCDKRadio (CDKRADIO *radio, chtype *actions)
       for (;;)
       {
 	 fixCursorPosition (radio);
+	 doupdate();
 	 input = (chtype)getchCDKObject (ObjOf (radio), &functionKey);
 
 	 /* Inject the character into the widget. */
@@ -281,6 +282,7 @@ static int _injectCDKRadio (CDKOBJS *object, chtype input)
 
    /* Draw the widget list */
    drawCDKRadioList (radio, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -390,6 +392,7 @@ static int _injectCDKRadio (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKRadioList (radio, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -781,6 +784,7 @@ static void _focusCDKRadio (CDKOBJS *object)
    CDKRADIO *radio = (CDKRADIO *)object;
 
    drawCDKRadioList (radio, ObjOf (radio)->box);
+   doupdate();
 }
 
 static void _unfocusCDKRadio (CDKOBJS *object)
@@ -788,6 +792,7 @@ static void _unfocusCDKRadio (CDKOBJS *object)
    CDKRADIO *radio = (CDKRADIO *)object;
 
    drawCDKRadioList (radio, ObjOf (radio)->box);
+   doupdate();
 }
 
 static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int boxWidth)
