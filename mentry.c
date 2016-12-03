@@ -297,6 +297,7 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
 
    /* Refresh the field. */
    drawCDKMentryField (widget);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -554,8 +555,9 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
 	 else if (moved)
 	 {
 	    wmove (widget->fieldWin, widget->currentRow, widget->currentCol);
-	    wrefresh (widget->fieldWin);
+	    wnoutrefresh (widget->fieldWin);
 	 }
+	 doupdate();
       }
 
       /* Should we do a post-process? */
@@ -619,7 +621,7 @@ static void _moveCDKMentry (CDKOBJS *object,
    moveCursesWindow (mentry->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (mentry));
+   touchCDKWindow (WindowOf (mentry));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -647,7 +649,7 @@ void drawCDKMentryField (CDKMENTRY *mentry)
 
    drawCdkTitle (mentry->win, ObjOf (mentry));
 
-   wrefresh (mentry->win);
+   wnoutrefresh (mentry->win);
 
    /* The information isn't null, redraw the field. */
    length = (int)strlen (mentry->info);
@@ -685,7 +687,7 @@ void drawCDKMentryField (CDKMENTRY *mentry)
 
    /* Refresh the screen. */
    wmove (mentry->fieldWin, mentry->currentRow, mentry->currentCol);
-   wrefresh (mentry->fieldWin);
+   wnoutrefresh (mentry->fieldWin);
 }
 
 /*
@@ -735,8 +737,9 @@ static void CDKMentryCallBack (CDKMENTRY *mentry, chtype character)
 	    drawCDKMentryField (mentry);
 	 }
 	 wmove (mentry->fieldWin, mentry->currentRow, mentry->currentCol);
-	 wrefresh (mentry->fieldWin);
+	 wnoutrefresh (mentry->fieldWin);
       }
+      doupdate();
    }
 }
 
@@ -751,7 +754,7 @@ static void _drawCDKMentry (CDKOBJS *object, boolean Box)
    if (Box)
    {
       drawObjBox (mentry->win, ObjOf (mentry));
-      wrefresh (mentry->win);
+      wnoutrefresh (mentry->win);
    }
 
    /* Do we need to draw in the shadow??? */
@@ -767,7 +770,7 @@ static void _drawCDKMentry (CDKOBJS *object, boolean Box)
 		   mentry->label,
 		   HORIZONTAL, 0,
 		   mentry->labelLen);
-      wrefresh (mentry->labelWin);
+      wnoutrefresh (mentry->labelWin);
    }
 
    /* Draw the mentry field. */
@@ -889,8 +892,11 @@ void setCDKMentryValue (CDKMENTRY *mentry, const char *newValue)
       mentry->currentCol        = len % mentry->fieldWidth;
    }
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the widget. */
    drawCDKMentryField (mentry);
+   doupdate();
+#endif
 }
 char *getCDKMentryValue (CDKMENTRY *mentry)
 {

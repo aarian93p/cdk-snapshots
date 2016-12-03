@@ -318,7 +318,7 @@ static void _moveCDKFselect (CDKOBJS *object,
 static void drawMyScroller (CDKFSELECT *widget)
 {
    SaveFocus (widget);
-   drawCDKScroll (widget->scrollField, ObjOf (widget->scrollField)->box);
+   MethodOf (widget)->drawObj (ObjOf (widget->scrollField), ObjOf (widget->scrollField)->box);
    RestoreFocus (widget);
 }
 
@@ -343,7 +343,7 @@ static void _drawCDKFselect (CDKOBJS *object, boolean Box GCC_UNUSED)
    }
 
    /* Draw in the entry field. */
-   drawCDKEntry (fselect->entryField, ObjOf (fselect->entryField)->box);
+   _drawCDKObject (fselect->entryField, ObjOf (fselect->entryField)->box);
 
    /* Draw in the scroll field. */
    drawMyScroller (fselect);
@@ -450,6 +450,7 @@ static int _injectCDKFselect (CDKOBJS *object, chtype input)
 
       /* Redraw the scrolling list. */
       drawMyScroller (fselect);
+      doupdate();
    }
 
    if (!complete)
@@ -859,9 +860,11 @@ void setCDKFselectContents (CDKFSELECT *widget,
    setCDKFselectCurrentItem (widget, 0);
    cleanCDKEntry (entry);
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the widget. */
    eraseCDKFselect (widget);
    drawCDKFselect (widget, ObjOf (widget)->box);
+#endif
 }
 
 char **getCDKFselectContents (CDKFSELECT *widget,
@@ -1259,6 +1262,7 @@ static int completeFilenameCB (EObjectType objectType GCC_UNUSED,
 	    }
 	 }
 	 drawMyScroller (fselect);
+	 doupdate();
 
 	 /* Ok, we found a match, is the next item similar? */
 	 if (Index + 1 < fselect->fileCounter &&

@@ -3,9 +3,8 @@
 #include <limits.h>
 
 /*
- * $Author: tom $
- * $Coauthor: Aarian P. Aleahmad $
- * $Date: 2016/01/27 19:34:48 $
+ * $Author: Aarian.P.Aleahmad $
+ * $Date: 2016/01/31 20:32:25 $
  * $Revision: 1.38 $
  */
 
@@ -163,9 +162,11 @@ void setCDKButtonMessage (CDKBUTTON *button, const char *info)
    button->infoPos = justifyString (button->boxWidth - 2 * BorderOf (button),
 				    button->infoLen, button->infoPos);
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the button widget. */
    eraseCDKButton (button);
    drawCDKButton (button, ObjOf (button)->box);
+#endif
 }
 
 chtype *getCDKButtonMessage (CDKBUTTON *button)
@@ -246,7 +247,7 @@ static void _drawCDKButton (CDKOBJS *object, boolean Box GCC_UNUSED)
       drawObjBox (button->win, ObjOf (button));
    }
    drawCDKButtonText (button);
-   wrefresh (button->win);
+   wnoutrefresh (button->win);
 }
 
 /*
@@ -303,7 +304,7 @@ static void _moveCDKButton (CDKOBJS *object,
    moveCursesWindow (button->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (button));
+   touchCDKWindow (WindowOf (button));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

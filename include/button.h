@@ -18,7 +18,7 @@
 #endif
 
 /*
- * Changes 2002-2004,2012,2016 copyright Thomas E. Dickey
+ * Changes 2002-2012,2016 copyright Thomas E. Dickey
  *
  * Copyright 1999, Grant Edwards
  * All rights reserved.
@@ -55,6 +55,10 @@
 /*
  * Declare any definitions you need to make.
  */
+typedef struct SButton CDKBUTTON;
+
+typedef void (*tButtonCallback)(struct SButton *button);
+
 
 
 /*
@@ -66,7 +70,7 @@ struct SButton {
    WINDOW *	win;
    WINDOW *	shadowWin;
    chtype *	info;
-   void         (*callback)(struct SButton *button);
+   tButtonCallback callback;
    int		infoLen;
    int		infoPos;
    int		boxWidth;
@@ -77,29 +81,30 @@ struct SButton {
    EExitType	exitType;
    boolean	shadow;
    chtype	highlight;
-   void	  *	callbackData;
+   void *	callbackData;
 };
-
-typedef struct SButton CDKBUTTON;
-
-typedef void (*tButtonCallback) (struct SButton *button);
 
 /*
  * This sets the callback function of the button's argument.
  */
-#define setCDKButtonCBArgs(button, argPtr)	((button)->callbackData = (void*)(argPtr))
+#define setCDKButtonCBArgs(button, argPtr) \
+		((button)->callbackData = (void*)(argPtr))
 
-#define getCDKButtonCBArgs(button, argType)	((argType) ((button)->callbackData))
+#define getCDKButtonCBArgs(button, argType) \
+		((argType) ((button)->callbackData))
 
 
 /*
  * This sets the button's highlight mode.
  */
-#define CDKButtonHighlightOf(button)			((button)->highlight)
+#define CDKButtonHighlightOf(button) \
+	       ((button)->highlight)
 
-#define setCDKButtonHighlight(button, highlightMode)	(CDKButtonHighlightOf(button) = (highlightMode))
+#define setCDKButtonHighlight(button, highlightMode) \
+	       (CDKButtonHighlightOf(button) = (highlightMode))
 
-#define getCDKButtonHighlight(button)			CDKButtonHighlightOf(button)
+#define getCDKButtonHighlight(button) \
+	       CDKButtonHighlightOf(button)
 
 /*
  * This creates a new CDK button widget.

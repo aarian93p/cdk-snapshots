@@ -229,7 +229,14 @@ void _destroyCDKObject (CDKOBJS *);
 #define destroyCDKObject(o)            _destroyCDKObject(ObjOf(o))
 
 /* Use these for widgets that have an obj member which is a CDKOBJS struct */
-#define drawCDKObject(o,box)           MethodOf(o)->drawObj       (ObjOf(o),box)
+#define _drawCDKObject(o,box)          MethodOf(o)->drawObj       (ObjOf(o),box)
+//#define redrawCDKObject(o)            drawCDKObject(o,ObjOf(o)->box)
+#define drawCDKObject(o,box)           \
+	do{\
+		_drawCDKObject(o,box);\
+		doupdate();\
+	}while(0)
+
 #define eraseCDKObject(o)              MethodOf(o)->eraseObj      (ObjOf(o))
 #define moveCDKObject(o,x,y,rel,ref)   MethodOf(o)->moveObj       (ObjOf(o),x,y,rel,ref)
 #define injectCDKObject(o,c,type)      (MethodOf(o)->injectObj    (ObjOf(o),c) ? ResultOf(o).value ## type : unknown ## type)

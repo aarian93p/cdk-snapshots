@@ -1013,7 +1013,7 @@ static void _moveCDKMatrix (CDKOBJS *object,
    moveCursesWindow (matrix->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (matrix));
+   touchCDKWindow (WindowOf (matrix));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

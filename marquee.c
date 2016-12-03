@@ -3,8 +3,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2012/03/21 00:04:52 $
- * $Revision: 1.80 $
+ * $Date: 2016/01/31 21:44:55 $
+ * $Revision: 1.81 $
  */
 
 DeclareCDKObjects (MARQUEE, Marquee, setCdk, Unknown);
@@ -281,7 +281,7 @@ static void _moveCDKMarquee (CDKOBJS *object,
    moveCursesWindow (widget->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (widget));
+   touchCDKWindow (WindowOf (widget));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -311,9 +311,13 @@ static void _drawCDKMarquee (CDKOBJS *object, boolean Box)
    {
       drawObjBox (widget->win, ObjOf (widget));
    }
+   else
+   {
+      touchwin (widget->win);
+   }
 
    /* Refresh the window. */
-   wrefresh (widget->win);
+   wnoutrefresh (widget->win);
 }
 
 /*

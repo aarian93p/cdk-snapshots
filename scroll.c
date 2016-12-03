@@ -3,8 +3,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2014/01/19 02:25:59 $
- * $Revision: 1.158 $
+ * $Date: 2016/01/31 21:44:07 $
+ * $Revision: 1.160 $
  */
 
 /*
@@ -290,6 +290,7 @@ static int _injectCDKScroll (CDKOBJS *object, chtype input)
 
    /* Draw the scrolling list */
    drawCDKScrollList (myself, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -394,6 +395,7 @@ static int _injectCDKScroll (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKScrollList (myself, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -495,7 +497,7 @@ static void _moveCDKScroll (CDKOBJS *object,
    moveCursesWindow (scrollp->scrollbarWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (scrollp));
+   touchCDKWindow (WindowOf (scrollp));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -621,9 +623,11 @@ static void drawCDKScrollList (CDKSCROLL *scrollp, boolean Box)
    {
       drawObjBox (scrollp->win, ObjOf (scrollp));
    }
-
-   /* Refresh the window. */
-   wrefresh (scrollp->win);
+   else
+   {
+      touchwin (scrollp->win);
+   }
+   wnoutrefresh (scrollp->win);
 }
 
 /*
