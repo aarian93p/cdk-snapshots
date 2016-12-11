@@ -1,5 +1,5 @@
 /*
- * $Id: entry.h,v 1.27 2012/03/21 20:52:57 tom Exp $
+ * $Id: entry.h,v 1.29 2016/11/20 14:41:44 tom Exp $
  */
 
 #ifndef CDKINCLUDES
@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /*
- * Changes 1999-2003,2012 copyright Thomas E. Dickey
+ * Changes 1999-2015,2016 copyright Thomas E. Dickey
  *
  * Copyright 1999, Mike Glover
  * All rights reserved.
@@ -86,7 +86,15 @@ struct SEntry {
    chtype	filler;
    chtype	hidden;
    ENTRYCB	callbackfn;
+   void		*callbackData;
 };
+
+/*
+ * This sets the callback function of the button's argument.
+ */
+#define setCDKEntryCBArgs(entry, argPtr)	((entry)->callbackData = (void*)(argPtr))
+
+#define getCDKEntryCBArgs(entry, argType)	((argType) ((entry)->callbackData))
 
 /*
  * This creates a pointer to a new CDK entry widget.

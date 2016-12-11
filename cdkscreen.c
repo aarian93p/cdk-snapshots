@@ -6,8 +6,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2008/11/01 14:27:23 $
- * $Revision: 1.88 $
+ * $Date: 2016/11/20 20:07:27 $
+ * $Revision: 1.90 $
  */
 
 typedef struct _all_screens
@@ -149,10 +149,10 @@ void *_newCDKObject (unsigned size, const CDKFUNCS * funcs)
 
 void _destroyCDKObject (CDKOBJS *obj)
 {
-   ALL_OBJECTS *p, *q;
-
    if (validCDKObject (obj))
    {
+      ALL_OBJECTS *p, *q;
+
       for (p = all_objects, q = 0; p != 0; q = p, p = p->link)
       {
 	 if (p->object == obj)
@@ -235,6 +235,16 @@ void registerCDKObject (CDKSCREEN *screen, EObjectType cdktype, void *object)
 }
 
 /*
+ * This registers a CDK object with a screen.
+ */
+void reRegisterCDKObject (EObjectType cdktype, void *object)
+{
+   CDKOBJS *obj = (CDKOBJS *)object;
+
+   registerCDKObject (obj->screen, cdktype, object);
+}
+
+/*
  * This removes an object from the CDK screen.
  */
 void unregisterCDKObject (EObjectType cdktype, void *object)
@@ -244,11 +254,12 @@ void unregisterCDKObject (EObjectType cdktype, void *object)
    if (validObjType (obj, cdktype) && obj->screenIndex >= 0)
    {
       CDKSCREEN *screen = (obj)->screen;
-      int Index, x;
 
       if (screen != 0)
       {
-	 Index = (obj)->screenIndex;
+	 int Index = (obj)->screenIndex;
+	 int x;
+
 	 obj->screenIndex = -1;
 
 	 /*

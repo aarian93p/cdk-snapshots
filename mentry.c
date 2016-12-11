@@ -2,8 +2,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2013/06/16 13:11:58 $
- * $Revision: 1.165 $
+ * $Date: 2016/11/20 20:55:23 $
+ * $Revision: 1.169 $
  */
 
 /*
@@ -287,8 +287,6 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
    /* *INDENT-EQLS */
    int cursorPos = getCursorPos (widget);
    int ppReturn = 1;
-   int x, fieldCharacters;
-   char holder;
    char *ret = unknownString;
    bool complete = FALSE;
 
@@ -322,6 +320,7 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
 	 bool moved = FALSE;
 	 bool redraw = FALSE;
 	 int infoLength = (int)strlen (widget->info);
+	 int fieldCharacters;
 
 	 switch (input)
 	 {
@@ -430,6 +429,8 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
 	       cursorPos = getCursorPos (widget);
 	       if (widget->info[cursorPos] != '\0')
 	       {
+		  int x;
+
 		  for (x = cursorPos; x < infoLength; x++)
 		  {
 		     widget->info[x] = widget->info[x + 1];
@@ -452,7 +453,7 @@ static int _injectCDKMentry (CDKOBJS *object, chtype input)
 	    }
 	    else
 	    {
-	       holder = widget->info[cursorPos];
+	       char holder = widget->info[cursorPos];
 	       widget->info[cursorPos] = widget->info[cursorPos + 1];
 	       widget->info[cursorPos + 1] = holder;
 	       drawCDKMentryField (widget);
@@ -655,6 +656,9 @@ void drawCDKMentryField (CDKMENTRY *mentry)
 	      ? length - 1
 	      : length);
 
+   /* Set background color and attributes of the entry field */
+   wbkgd (mentry->fieldWin, mentry->fieldAttr);
+
    /* Start redrawing the fields. */
    for (x = 0; x < mentry->rows; x++)
    {
@@ -664,7 +668,7 @@ void drawCDKMentryField (CDKMENTRY *mentry)
 	 {
 	    if (isHiddenDisplayType (mentry->dispType))
 	    {
-	       (void)mvwaddch (mentry->fieldWin, x, y, mentry->filler);
+	       (void)mvwaddch (mentry->fieldWin, x, y, mentry->hidden | mentry->fieldAttr);
 	    }
 	    else
 	    {
@@ -674,7 +678,9 @@ void drawCDKMentryField (CDKMENTRY *mentry)
 	 }
 	 else
 	 {
-	    (void)mvwaddch (mentry->fieldWin, x, y, mentry->filler);
+	    (void)mvwhline (mentry->fieldWin, x, y, mentry->filler |
+			    mentry->fieldAttr, mentry->fieldWidth - y);
+	    break;
 	 }
       }
    }
@@ -695,7 +701,6 @@ static void CDKMentryCallBack (CDKMENTRY *mentry, chtype character)
    int cursorPos  = getCursorPos (mentry);
    int infoLength = (int)strlen (mentry->info);
    char newchar   = (char)filterByDisplayType (mentry->dispType, character);
-   int x;
 
    if (newchar == ERR)
    {
@@ -703,6 +708,8 @@ static void CDKMentryCallBack (CDKMENTRY *mentry, chtype character)
    }
    else
    {
+      int x;
+
       for (x = infoLength + 1; x > cursorPos; x--)
       {
 	 mentry->info[x] = mentry->info[x - 1];
@@ -851,7 +858,6 @@ void setCDKMentryValue (CDKMENTRY *mentry, const char *newValue)
    int fieldCharacters  = mentry->rows * mentry->fieldWidth;
    int len              = 0;
    int copychars        = 0;
-   int rowsUsed;
 
    /* Just to be sure, if lets make sure the new value isn't null. */
    if (newValue == 0)
@@ -879,7 +885,7 @@ void setCDKMentryValue (CDKMENTRY *mentry, const char *newValue)
    else
    {
       /* *INDENT-EQLS* */
-      rowsUsed                  = len / mentry->fieldWidth;
+      int rowsUsed              = len / mentry->fieldWidth;
       mentry->topRow            = rowsUsed - mentry->rows + 1;
       mentry->currentRow        = mentry->rows - 1;
       mentry->currentCol        = len % mentry->fieldWidth;
