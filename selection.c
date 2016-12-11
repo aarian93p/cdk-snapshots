@@ -295,6 +295,7 @@ static int _injectCDKSelection (CDKOBJS *object, chtype input)
 
    /* Draw the widget list */
    drawCDKSelectionList (selection, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -418,6 +419,7 @@ static int _injectCDKSelection (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKSelectionList (selection, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -467,7 +469,7 @@ static void _moveCDKSelection (CDKOBJS *object,
    moveCursesWindow (selection->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (selection));
+   touchCDKWindow (WindowOf (selection));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

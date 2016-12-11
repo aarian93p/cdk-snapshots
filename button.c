@@ -162,9 +162,11 @@ void setCDKButtonMessage (CDKBUTTON *button, const char *info)
    button->infoPos = justifyString (button->boxWidth - 2 * BorderOf (button),
 				    button->infoLen, button->infoPos);
 
+#ifndef NO_CDK_AUTO_DRAW
    /* Redraw the button widget. */
    eraseCDKButton (button);
    drawCDKButton (button, ObjOf (button)->box);
+#endif
 }
 
 chtype *getCDKButtonMessage (CDKBUTTON *button)
@@ -245,7 +247,7 @@ static void _drawCDKButton (CDKOBJS *object, boolean Box GCC_UNUSED)
       drawObjBox (button->win, ObjOf (button));
    }
    drawCDKButtonText (button);
-   wrefresh (button->win);
+   wnoutrefresh (button->win);
 }
 
 /*
@@ -302,7 +304,7 @@ static void _moveCDKButton (CDKOBJS *object,
    moveCursesWindow (button->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (button));
+   touchCDKWindow (WindowOf (button));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)

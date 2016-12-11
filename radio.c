@@ -235,6 +235,7 @@ int activateCDKRadio (CDKRADIO *radio, chtype *actions)
 	 int ret;
 
 	 fixCursorPosition (radio);
+	 doupdate();
 	 input = (chtype)getchCDKObject (ObjOf (radio), &functionKey);
 
 	 /* Inject the character into the widget. */
@@ -282,6 +283,7 @@ static int _injectCDKRadio (CDKOBJS *object, chtype input)
 
    /* Draw the widget list */
    drawCDKRadioList (radio, ObjOf (widget)->box);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -347,7 +349,10 @@ static int _injectCDKRadio (CDKOBJS *object, chtype input)
 	    break;
 
 	 case SPACE:
-	    radio->selectedItem = widget->currentItem;
+	    if (radio->mode[widget->currentItem] == 0)
+	    {
+	       radio->selectedItem = widget->currentItem;
+	    }
 	    break;
 
 	 case KEY_ESC:
@@ -391,6 +396,7 @@ static int _injectCDKRadio (CDKOBJS *object, chtype input)
    if (!complete)
    {
       drawCDKRadioList (radio, ObjOf (widget)->box);
+      doupdate();
       setExitType (widget, 0);
    }
 
@@ -440,7 +446,7 @@ static void _moveCDKRadio (CDKOBJS *object,
    moveCursesWindow (radio->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (radio));
+   touchCDKWindow (WindowOf (radio));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -594,6 +600,7 @@ static void destroyInfo (CDKRADIO *widget)
 
    freeAndNull (widget->itemLen);
    freeAndNull (widget->itemPos);
+   freeAndNull (widget->mode);
 }
 
 /*
@@ -778,11 +785,80 @@ int getCDKRadioSelectedItem (CDKRADIO *radio)
    return radio->selectedItem;
 }
 
+/*
+ * This sets the modes of the items in the radio list. Currently
+ * there are only two: editable=0 and read-only=1
+ */
+void setCDKRadioModes (CDKRADIO *radio, int *modes)
+{
+   int j;
+
+   /* Make sure the widget pointer is not null. */
+   if (radio == 0)
+   {
+      return;
+   }
+
+   /* Set the modes. */
+   for (j = 0; j < radio->listSize; j++)
+   {
+      radio->mode[j] = modes[j];
+   }
+}
+int *getCDKRadioModes (CDKRADIO *radio)
+{
+   return radio->mode;
+}
+
+/*
+ * This sets a single mode of an item in the selection list.
+ */
+void setCDKRadioMode (CDKRADIO *radio, int Index, int mode)
+{
+   /* Make sure the widget pointer is not null. */
+   if (radio == 0)
+   {
+      return;
+   }
+
+   /* Make sure the index isn't out of range. */
+   if (Index < 0)
+   {
+      radio->mode[0] = mode;
+   }
+   else if (Index > radio->listSize)
+   {
+      radio->mode[radio->listSize - 1] = mode;
+   }
+   else
+   {
+      radio->mode[Index] = mode;
+   }
+}
+int getCDKRadioMode (CDKRADIO *radio, int Index)
+{
+   /* Make sure the index isn't out of range. */
+   if (Index < 0)
+   {
+      return radio->mode[0];
+   }
+   else if (Index > radio->listSize)
+   {
+      return radio->mode[radio->listSize - 1];
+   }
+   else
+   {
+      return radio->mode[Index];
+   }
+}
+
+
 static void _focusCDKRadio (CDKOBJS *object)
 {
    CDKRADIO *radio = (CDKRADIO *)object;
 
    drawCDKRadioList (radio, ObjOf (radio)->box);
+   doupdate();
 }
 
 static void _unfocusCDKRadio (CDKOBJS *object)
@@ -790,6 +866,7 @@ static void _unfocusCDKRadio (CDKOBJS *object)
    CDKRADIO *radio = (CDKRADIO *)object;
 
    drawCDKRadioList (radio, ObjOf (radio)->box);
+   doupdate();
 }
 
 static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int boxWidth)
@@ -803,10 +880,13 @@ static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int box
       chtype **newList = typeCallocN (chtype *, listSize + 1);
       int *newLen      = typeCallocN (int, listSize + 1);
       int *newPos      = typeCallocN (int, listSize + 1);
+      int *newMode      = typeCallocN (int, listSize + 1);
+      int j;
 
       if (newList != 0
 	  && newLen != 0
-	  && newPos != 0)
+	  && newPos != 0
+	  && newMode != 0)
       {
 	 int j;
 
@@ -831,12 +911,14 @@ static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int box
 	    radio->item = newList;
 	    radio->itemLen = newLen;
 	    radio->itemPos = newPos;
+	    radio->mode    = newMode;
 	 }
 	 else
 	 {
 	    CDKfreeChtypes (newList);
 	    freeChecked (newLen);
 	    freeChecked (newPos);
+	    freeChecked (newMode);
 	 }
       }
       else
@@ -844,6 +926,7 @@ static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int box
 	 CDKfreeChtypes (newList);
 	 freeChecked (newLen);
 	 freeChecked (newPos);
+	 freeChecked (newMode);
       }
    }
    else

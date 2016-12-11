@@ -1,5 +1,5 @@
 /*
- * $Id: button.h,v 1.13 2016/01/31 21:08:37 tom Exp $
+ * $Id: button.h,v 1.13 2016/01/27 19:34:48 Aarian P. Aleahmad Exp $
  */
 
 #ifndef CDKINCLUDES
@@ -58,6 +58,7 @@
 typedef struct SButton CDKBUTTON;
 
 typedef void (*tButtonCallback)(struct SButton *button);
+
 
 
 /*

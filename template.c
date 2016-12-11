@@ -242,6 +242,7 @@ static int _injectCDKTemplate (CDKOBJS *object, chtype input)
 
    /* Move the cursor. */
    drawCDKTemplateField (widget);
+   doupdate();
 
    /* Check if there is a pre-process function to be called. */
    if (PreProcessFuncOf (widget) != 0)
@@ -270,6 +271,7 @@ static int _injectCDKTemplate (CDKOBJS *object, chtype input)
 	    {
 	       cleanCDKTemplate (widget);
 	       drawCDKTemplateField (widget);
+	       doupdate();
 	    }
 	    break;
 
@@ -280,6 +282,7 @@ static int _injectCDKTemplate (CDKOBJS *object, chtype input)
 	       GPasteBuffer = copyChar (widget->info);
 	       cleanCDKTemplate (widget);
 	       drawCDKTemplateField (widget);
+	       doupdate();
 	    }
 	    else
 	    {
@@ -313,6 +316,7 @@ static int _injectCDKTemplate (CDKOBJS *object, chtype input)
 		  (widget->callbackfn) (widget, (chtype)GPasteBuffer[x]);
 	       }
 	       drawCDKTemplateField (widget);
+	       doupdate();
 	    }
 	    else
 	    {
@@ -514,6 +518,7 @@ static void CDKTemplateCallBack (CDKTEMPLATE *cdktemplate, chtype input)
 	    {
 	       strcpy (cdktemplate->info, test);
 	       drawCDKTemplateField (cdktemplate);
+	       doupdate();
 	    }
 	    else
 	    {
@@ -640,7 +645,7 @@ static void _moveCDKTemplate (CDKOBJS *object,
    moveCursesWindow (cdktemplate->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (cdktemplate));
+   touchCDKWindow (WindowOf (cdktemplate));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -670,7 +675,7 @@ static void _drawCDKTemplate (CDKOBJS *object, boolean Box)
 
    drawCdkTitle (cdktemplate->win, object);
 
-   wrefresh (cdktemplate->win);
+   wnoutrefresh (cdktemplate->win);
 
    drawCDKTemplateField (cdktemplate);
 }
@@ -691,7 +696,7 @@ static void drawCDKTemplateField (CDKTEMPLATE *cdktemplate)
 		   cdktemplate->label,
 		   HORIZONTAL, 0,
 		   cdktemplate->labelLen);
-      wrefresh (cdktemplate->labelWin);
+      wnoutrefresh (cdktemplate->labelWin);
    }
 
    /* Draw in the cdktemplate... */
@@ -723,7 +728,7 @@ static void drawCDKTemplateField (CDKTEMPLATE *cdktemplate)
       {
 	 adjustCDKTemplateCursor (cdktemplate, +1);
       }
-      wrefresh (cdktemplate->fieldWin);
+      wnoutrefresh (cdktemplate->fieldWin);
    }
 }
 
@@ -823,6 +828,7 @@ void setCDKTemplateValue (CDKTEMPLATE *cdktemplate, const char *newValue)
    int copychars        = 0;
    int x;
 
+   /* Erase the old value. */
    cleanCDKTemplate (cdktemplate);
 
    /* Just to be sure, if let's make sure the new value isn't null. */
@@ -835,8 +841,7 @@ void setCDKTemplateValue (CDKTEMPLATE *cdktemplate, const char *newValue)
    len = (int)strlen (newValue);
    copychars = MINIMUM (len, cdktemplate->fieldWidth);
 
-   /* OK, erase the old value, and copy in the new value. */
-   cdktemplate->info[0] = '\0';
+   /* OK, copy in the new value. */
    strncpy (cdktemplate->info, newValue, (size_t) copychars);
 
    /* Use the function which handles the input of the characters. */

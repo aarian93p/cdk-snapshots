@@ -348,7 +348,7 @@ static void _moveCDKDialog (CDKOBJS *object,
    moveCursesWindow (dialog->shadowWin, -xdiff, -ydiff);
 
    /* Touch the windows so they 'move'. */
-   refreshCDKWindow (WindowOf (dialog));
+   touchCDKWindow (WindowOf (dialog));
 
    /* Redraw the window, if they asked for it. */
    if (refresh_flag)
@@ -390,7 +390,7 @@ static void _drawCDKDialog (CDKOBJS *object, boolean Box)
    /* Draw in the buttons. */
    drawCDKDialogButtons (dialog);
 
-   wrefresh (dialog->win);
+   wnoutrefresh (dialog->win);
 }
 
 /*

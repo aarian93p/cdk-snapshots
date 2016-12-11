@@ -10,6 +10,8 @@
 extern "C" {
 #endif
 
+#define NO_CDK_AUTO_DRAW
+
 #include <cdk.h>
 
 /*

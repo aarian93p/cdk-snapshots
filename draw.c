@@ -65,7 +65,7 @@ void boxWindow (WINDOW *window, chtype attr)
    (void)mvwaddch (window, tly, brx, ACS_URCORNER | attr);
    (void)mvwaddch (window, bry, tlx, ACS_LLCORNER | attr);
    (void)mvwaddch (window, bry, brx, ACS_LRCORNER | attr);
-   (void)wrefresh (window);
+   (void)wnoutrefresh (window);
 }
 
 /*
@@ -127,7 +127,7 @@ void attrbox (WINDOW *win,
    }
    if (count != 0)
    {
-      wrefresh (win);
+      wnoutrefresh (win);
    }
 }
 
@@ -230,7 +230,7 @@ void drawShadow (WINDOW *shadowWin)
       (void)mvwaddch (shadowWin, 0, x_hi, ACS_URCORNER | A_DIM);
       (void)mvwaddch (shadowWin, y_hi, 0, ACS_LLCORNER | A_DIM);
       (void)mvwaddch (shadowWin, y_hi, x_hi, ACS_LRCORNER | A_DIM);
-      wrefresh (shadowWin);
+      wnoutrefresh (shadowWin);
    }
 }
 
@@ -253,6 +253,18 @@ void writeBlanks (WINDOW *window, int xpos, int ypos, int align, int start, int 
    }
 }
 
+static void CDKmvwaddch(WINDOW *window,
+		      int ypos,
+		      int xpos,
+			  chtype ch,
+			  chtype attr)
+{
+	chtype color = (attr | ch) & (A_COLOR);
+//	chtype color = ((attr & A_COLOR)) ? (attr & A_COLOR) : (ch & A_COLOR);
+//	chtype attrib = (attr | ch) & (A_ATTRIBUTES & ~A_COLOR);
+
+	(void)mvwaddch (window, ypos, xpos, ((attr | ch) & (~A_COLOR)) | color);
+}
 /*
  * This writes out a char * string with no attributes.
  */
@@ -288,10 +300,11 @@ void writeCharAttrib (WINDOW *window,
       display = MINIMUM (display, getmaxx (window) - 1);
       for (x = 0; x < display; x++)
       {
-	 (void)mvwaddch (window,
+	 CDKmvwaddch (window,
 			 ypos,
 			 xpos + x,
-			 CharOf (string[x + start]) | attr);
+			 CharOf (string[x + start]),
+			 attr);
       }
    }
    else
@@ -300,10 +313,11 @@ void writeCharAttrib (WINDOW *window,
       display = MINIMUM (display, getmaxy (window) - 1);
       for (x = 0; x < display; x++)
       {
-	 (void)mvwaddch (window,
+	 CDKmvwaddch (window,
 			 ypos + x,
 			 xpos,
-			 CharOf (string[x + start]) | attr);
+			 CharOf (string[x + start]),
+			 attr);
       }
    }
 }
@@ -345,7 +359,8 @@ void writeChtypeAttrib (WINDOW *window,
       display = MINIMUM (diff, getmaxx (window) - xpos);
       for (x = 0; x < display; x++)
       {
-	 (void)mvwaddch (window, ypos, xpos + x, string[x + start] | attr);
+//	 (void)mvwaddch (window, ypos, xpos + x, ((string[x + start]) & A_CHARTEXT ) | (attr & A_ATTRIBUTES));
+	 CDKmvwaddch (window, ypos, xpos + x, string[x + start], attr);
       }
    }
    else
@@ -354,7 +369,8 @@ void writeChtypeAttrib (WINDOW *window,
       display = MINIMUM (diff, getmaxy (window) - ypos);
       for (x = 0; x < display; x++)
       {
-	 (void)mvwaddch (window, ypos + x, xpos, string[x + start] | attr);
+//	 (void)mvwaddch (window, ypos + x, xpos, ((string[x + start]) & A_CHARTEXT ) | (attr & A_ATTRIBUTES));
+	 CDKmvwaddch (window, ypos + x, xpos, string[x + start], attr);
       }
    }
 }
