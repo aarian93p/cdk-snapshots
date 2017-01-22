@@ -1,4 +1,4 @@
-/* $Id: appointment.c,v 1.27 2014/11/06 01:05:14 tom Exp $ */
+/* $Id: appointment.c,v 1.29 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -70,14 +70,12 @@ int main (int argc, char **argv)
    /* *INDENT-EQLS* */
    CDKSCREEN *cdkscreen         = 0;
    CDKCALENDAR *calendar        = 0;
-   WINDOW *cursesWin            = 0;
    const char *title            = "<C></U>CDK Appointment Book\n<C><#HL(30)>\n";
    char *filename               = 0;
    struct tm *dateInfo          = 0;
    time_t clck                  = 0;
    struct AppointmentInfo appointmentInfo;
-   int day, month, year, ret, x;
-   char temp[1000];
+   int day, month, year, x;
 
    /*
     * Get the current dates and set the default values for
@@ -93,6 +91,8 @@ int main (int argc, char **argv)
    /* Check the command line for options. */
    while (1)
    {
+      int ret;
+
       /* Are there any more command line options to parse. */
       if ((ret = getopt (argc, argv, "d:m:y:t:f:")) == -1)
       {
@@ -126,6 +126,7 @@ int main (int argc, char **argv)
    /* Create the appointment book filename. */
    if (filename == 0)
    {
+      char temp[1000];
       char *home = getenv ("HOME");
       if (home != 0)
       {
@@ -133,7 +134,7 @@ int main (int argc, char **argv)
       }
       else
       {
-	 strcat (temp, ".appointment");
+	 strcpy (temp, ".appointment");
       }
       filename = copyChar (temp);
    }
@@ -141,9 +142,7 @@ int main (int argc, char **argv)
    /* Read the appointment book information. */
    readAppointmentFile (filename, &appointmentInfo);
 
-   /* Set up CDK. */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start CDK Colors. */
    initCDKColor ();
@@ -217,9 +216,7 @@ void readAppointmentFile (char *filename, struct AppointmentInfo *appInfo)
    /* *INDENT-EQLS* */
    int appointments     = 0;
    int linesRead        = 0;
-   int segments         = 0;
    char **lines         = 0;
-   char **temp;
    int x;
 
    /* Read the appointment file. */
@@ -233,8 +230,8 @@ void readAppointmentFile (char *filename, struct AppointmentInfo *appInfo)
    /* Split each line up and create an appointment. */
    for (x = 0; x < linesRead; x++)
    {
-      temp = CDKsplitString (lines[x], CTRL ('V'));
-      segments = (int)CDKcountStrings ((CDK_CSTRING2)temp);
+      char **temp = CDKsplitString (lines[x], CTRL ('V'));
+      int segments = (int)CDKcountStrings ((CDK_CSTRING2)temp);
 
       /*
        * A valid line has 5 elements:
@@ -424,15 +421,12 @@ static int displayCalendarMarkCB (EObjectType objectType GCC_UNUSED, void
 				  *object, void *clientData, chtype key GCC_UNUSED)
 {
    /* *INDENT-EQLS* */
-   CDKCALENDAR *calendar                        = (CDKCALENDAR *)object;
-   CDKLABEL *label                              = 0;
-   struct AppointmentInfo *appointmentInfo      = (struct AppointmentInfo *)clientData;
-   int found                                    = 0;
-   int day                                      = 0;
-   int month                                    = 0;
-   int year                                     = 0;
-   int mesgLines                                = 0;
-   const char *type                             = 0;
+   CDKCALENDAR *calendar                   = (CDKCALENDAR *)object;
+   CDKLABEL *label                         = 0;
+   struct AppointmentInfo *appointmentInfo = (struct AppointmentInfo *)clientData;
+   int found                               = 0;
+   int mesgLines                           = 0;
+   const char *type                        = 0;
    char *mesg[10], temp[256];
    int x;
 
@@ -441,9 +435,9 @@ static int displayCalendarMarkCB (EObjectType objectType GCC_UNUSED, void
    {
       /* Get the day month year. */
       /* *INDENT-EQLS* */
-      day       = appointmentInfo->appointment[x].day;
-      month     = appointmentInfo->appointment[x].month;
-      year      = appointmentInfo->appointment[x].year;
+      int day   = appointmentInfo->appointment[x].day;
+      int month = appointmentInfo->appointment[x].month;
+      int year  = appointmentInfo->appointment[x].year;
 
       /* Determine the appointment type. */
       if (appointmentInfo->appointment[x].type == vBirthday)

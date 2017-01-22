@@ -1,4 +1,4 @@
-/* $Id: clock.c,v 1.9 2012/03/21 22:58:10 tom Exp $ */
+/* $Id: clock.c,v 1.11 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -11,11 +11,9 @@ int main (int argc, char **argv)
    /* *INDENT-EQLS* */
    CDKSCREEN *cdkscreen = 0;
    CDKLABEL *demo       = 0;
-   WINDOW *cursesWin    = 0;
    int boxLabel         = 0;
    const char *mesg[4];
    char temp[256];
-   struct tm *currentTime;
    time_t clck;
    int ret;
 
@@ -29,9 +27,7 @@ int main (int argc, char **argv)
       }
    }
 
-   /* Set up CDK */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start CDK Colors */
    initCDKColor ();
@@ -41,7 +37,7 @@ int main (int argc, char **argv)
 
    /* Declare the labels. */
    demo = newCDKLabel (cdkscreen, CENTER, CENTER,
-		       (CDK_CSTRING2) mesg, 1,
+		       (CDK_CSTRING2)mesg, 1,
 		       boxLabel, FALSE);
 
    /* Is the label null??? */
@@ -63,6 +59,8 @@ int main (int argc, char **argv)
    /* Do this for-a-while... */
    do
    {
+      struct tm *currentTime;
+
       /* Get the current time. */
       time (&clck);
       currentTime = localtime (&clck);
@@ -75,7 +73,7 @@ int main (int argc, char **argv)
       mesg[0] = copyChar (temp);
 
       /* Set the label contents. */
-      setCDKLabel (demo, (CDK_CSTRING2) mesg, 1, ObjOf (demo)->box);
+      setCDKLabel (demo, (CDK_CSTRING2)mesg, 1, ObjOf (demo)->box);
 
       /* Draw the label, and sleep. */
       drawCDKLabel (demo, ObjOf (demo)->box);

@@ -6,8 +6,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2008/11/01 14:27:23 $
- * $Revision: 1.88 $
+ * $Date: 2016/12/04 15:41:50 $
+ * $Revision: 1.91 $
  */
 
 typedef struct _all_screens
@@ -149,10 +149,10 @@ void *_newCDKObject (unsigned size, const CDKFUNCS * funcs)
 
 void _destroyCDKObject (CDKOBJS *obj)
 {
-   ALL_OBJECTS *p, *q;
-
    if (validCDKObject (obj))
    {
+      ALL_OBJECTS *p, *q;
+
       for (p = all_objects, q = 0; p != 0; q = p, p = p->link)
       {
 	 if (p->object == obj)
@@ -181,12 +181,19 @@ CDKSCREEN *initCDKScreen (WINDOW *window)
    CDKSCREEN *screen = 0;
 
    /* initialization, for the first time */
-   if (all_screens == 0)
+   if (all_screens == 0 || stdscr == 0 || window == 0)
    {
       /* Set up basic curses settings. */
 #ifdef HAVE_SETLOCALE
       setlocale (LC_ALL, "");
 #endif
+      /* Initialize curses after setting the locale, since curses depends
+       * on having a correct locale to reflect the terminal's encoding.
+       */
+      if (stdscr == 0 || window == 0)
+      {
+	 window = initscr ();
+      }
       noecho ();
       cbreak ();
    }
@@ -241,7 +248,7 @@ void reRegisterCDKObject (EObjectType cdktype, void *object)
 {
    CDKOBJS *obj = (CDKOBJS *)object;
 
-   registerCDKObject ( obj->screen, cdktype, object);
+   registerCDKObject (obj->screen, cdktype, object);
 }
 
 /*
@@ -254,11 +261,12 @@ void unregisterCDKObject (EObjectType cdktype, void *object)
    if (validObjType (obj, cdktype) && obj->screenIndex >= 0)
    {
       CDKSCREEN *screen = (obj)->screen;
-      int Index, x;
 
       if (screen != 0)
       {
-	 Index = (obj)->screenIndex;
+	 int Index = (obj)->screenIndex;
+	 int x;
+
 	 obj->screenIndex = -1;
 
 	 /*

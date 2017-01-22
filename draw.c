@@ -2,8 +2,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2013/06/16 13:20:30 $
- * $Revision: 1.60 $
+ * $Date: 2016/12/04 19:43:46 $
+ * $Revision: 1.62 $
  */
 
 /*
@@ -13,21 +13,21 @@
 void initCDKColor (void)
 {
 #ifdef HAVE_START_COLOR
-   int color[] =
-   {
-      COLOR_WHITE, COLOR_RED, COLOR_GREEN,
-      COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA,
-      COLOR_CYAN, COLOR_BLACK
-   };
-   int pair = 1;
-   int fg, bg;
-   int limit;
-
    if (has_colors ())
    {
+      int color[] =
+      {
+	 COLOR_WHITE, COLOR_RED, COLOR_GREEN,
+	 COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA,
+	 COLOR_CYAN, COLOR_BLACK
+      };
+      int pair = 1;
+      int fg, bg;
+      int limit;
+
       start_color ();
 
-      limit = (COLORS < 8) ? COLORS : 8;
+      limit = (COLORS < MAX_COLORS) ? COLORS : MAX_COLORS;
 
       /* Create the color pairs. */
       for (fg = 0; fg < limit; fg++)

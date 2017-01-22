@@ -3,8 +3,8 @@
 #include <scroller.h>
 
 /*
- * $Author: Aarian P. Aleahmad $
- * $Date: 2016/03/06 16:45:00 $
+ * $Author: aleahmad $
+ * $Date: 2016/11/20 13:57:20 $
  * $Revision: 1.3 $
  */
 
