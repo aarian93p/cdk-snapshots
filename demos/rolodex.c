@@ -1,4 +1,4 @@
-/* $Id: rolodex.c,v 1.27 2014/11/06 01:31:02 tom Exp $ */
+/* $Id: rolodex.c,v 1.29 2016/12/04 15:22:16 tom Exp $ */
 #include "rolodex.h"
 
 #ifdef HAVE_XCURSES
@@ -25,18 +25,15 @@ int main (void)
    CDKMENU *rolodexMenu;
    CDKLABEL *rolodexTitle;
    SRolodex groupList[MAXGROUPS];
-   WINDOW *cursesWin;
    const char *menulist[MAX_MENU_ITEMS][MAX_SUB_ITEMS];
    const char *title[5];
    char *home, temp[MYSIZE];
    const char *mesg[15];
-   int subMenuSize[10], menuLocations[10], selection;
+   int subMenuSize[10], menuLocations[10];
    int group, ret, x;
    int groupCount = 0;
 
-   /* Set up CDK  */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start CDK color. */
    initCDKColor ();
@@ -158,7 +155,7 @@ int main (void)
    for (;;)
    {
       /* Activate the menu */
-      selection = activateCDKMenu (rolodexMenu, 0);
+      int selection = activateCDKMenu (rolodexMenu, 0);
 
       /* Check the return value of the selection. */
       if (selection == 0)
@@ -572,7 +569,7 @@ int openNewRCFile (CDKSCREEN *screen, SRolodex * groupList, int groupCount)
 {
    /* Declare local variables. */
    CDKFSELECT *fileSelector;
-   char *filename, *mesg[10], temp[MYSIZE];
+   char *filename, *mesg[10];
    int x;
 
    /* Get the filename. */
@@ -610,6 +607,8 @@ int openNewRCFile (CDKSCREEN *screen, SRolodex * groupList, int groupCount)
    /* Check the return value. */
    if (groupCount < 0)
    {
+      char temp[MYSIZE];
+
       /* This file does not appear to be a rolodex file. */
       mesg[0] = copyChar ("<C></B/16>The file<!B!16>");
       fmt1s (temp, "<C></B/16>(%.*s)<!B!16>", filename);
@@ -707,7 +706,6 @@ void useRolodexGroup (CDKSCREEN *screen, char *groupName, char *groupDesc
    CDKSCROLL *nameList  = 0;
    CDKLABEL *helpWindow = 0;
    SPhoneData phoneData;
-   SPhoneRecord *phoneRecord;
    char *Index[MAX_ITEMS];
    const char *title[3];
    const char *mesg[3];
@@ -767,7 +765,7 @@ void useRolodexGroup (CDKSCREEN *screen, char *groupName, char *groupDesc
    /* Set up the data needed for the scrolling list. */
    for (x = 0; x < phoneData.recordCount; x++)
    {
-      phoneRecord = &phoneData.record[x];
+      SPhoneRecord *phoneRecord = &phoneData.record[x];
       sprintf (temp, "</B/29>%s (%s)", phoneRecord->name, GLineType[phoneRecord->lineType]);
       Index[x] = copyChar (temp);
    }
@@ -903,8 +901,6 @@ int readPhoneDataFile (char *dataFile, SPhoneData * phoneData)
  */
 int savePhoneDataFile (char *filename, SPhoneData * phoneData)
 {
-   /* Declare variables. */
-   SPhoneRecord *phoneRecord;
    time_t clck;
    FILE *fd;
    int x;
@@ -927,8 +923,7 @@ int savePhoneDataFile (char *filename, SPhoneData * phoneData)
    /* Cycle through the data and start writing it to the file. */
    for (x = 0; x < phoneData->recordCount; x++)
    {
-      /* Get a pointer to the object. */
-      phoneRecord = &phoneData->record[x];
+      SPhoneRecord *phoneRecord = &phoneData->record[x];
 
       /* Check the phone type. */
       if (phoneRecord->lineType == vCell || phoneRecord->lineType == vPager)
@@ -1233,7 +1228,6 @@ int getLargePhoneRecord (CDKSCREEN *screen, SPhoneRecord * phoneRecord)
    CDKTEMPLATE *phoneTemplate;
    const char *buttons[5];
    const char *mesg[15];
-   int ret;
 
    /* Define the widgets. */
    nameEntry = newCDKEntry (screen, LEFT, 5,
@@ -1277,6 +1271,8 @@ int getLargePhoneRecord (CDKSCREEN *screen, SPhoneRecord * phoneRecord)
    /* Get the phone information. */
    for (;;)
    {
+      int ret;
+
       /* Draw the widgets on the screen. */
       drawCDKEntry (nameEntry, ObjOf (nameEntry)->box);
       drawCDKEntry (addressEntry, ObjOf (addressEntry)->box);
@@ -1358,12 +1354,10 @@ int getLargePhoneRecord (CDKSCREEN *screen, SPhoneRecord * phoneRecord)
  */
 int getSmallPhoneRecord (CDKSCREEN *screen, SPhoneRecord * phoneRecord)
 {
-   /* Declare local variables. */
    CDKENTRY *nameEntry, *descEntry;
    CDKTEMPLATE *phoneTemplate;
    const char *buttons[5];
    const char *mesg[15];
-   int ret;
 
    /* Define the widgets. */
    nameEntry = newCDKEntry (screen, CENTER, 8,
@@ -1385,6 +1379,8 @@ int getSmallPhoneRecord (CDKSCREEN *screen, SPhoneRecord * phoneRecord)
    /* Get the phone information. */
    for (;;)
    {
+      int ret;
+
       /* Draw the widgets on the screen. */
       drawCDKEntry (nameEntry, ObjOf (nameEntry)->box);
       drawCDKTemplate (phoneTemplate, ObjOf (phoneTemplate)->box);
@@ -1605,9 +1601,8 @@ int printGroup (SRolodex groupRecord, const char *filename, char *printer)
 #else
    uid_t uid = getuid ();
 #endif
-   char tempFilename[MYSIZE], command[MYSIZE];
+   char tempFilename[MYSIZE];
    SPhoneData phoneData;
-   SPhoneRecord *phoneRecord;
    int phoneCount, x;
    FILE *fd;
 
@@ -1647,7 +1642,7 @@ int printGroup (SRolodex groupRecord, const char *filename, char *printer)
 	    "==============================================================================\n");
    for (x = 0; x < phoneCount; x++)
    {
-      phoneRecord = &phoneData.record[x];
+      SPhoneRecord *phoneRecord = &phoneData.record[x];
       fprintf (fd, "Name        : %s\n", phoneRecord->name);
       fprintf (fd, "Phone Number: %s (%s)\n", phoneRecord->phoneNumber,
 	       GLineType[phoneRecord->lineType]);
@@ -1664,6 +1659,7 @@ int printGroup (SRolodex groupRecord, const char *filename, char *printer)
    /* Determine if the information is going to a file or printer. */
    if (printer != 0)
    {
+      char command[MYSIZE];
       /* Print the file to the given printer. */
       sprintf (command, "lpr -P%s %s", printer, tempFilename);
       system (command);

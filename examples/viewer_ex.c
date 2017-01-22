@@ -1,4 +1,4 @@
-/* $Id: viewer_ex.c,v 1.20 2012/03/21 23:42:18 tom Exp $ */
+/* $Id: viewer_ex.c,v 1.22 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -15,9 +15,6 @@ int main (int argc, char **argv)
    CDKSCREEN *cdkscreen = 0;
    CDKVIEWER *example   = 0;
    CDKFSELECT *fSelect  = 0;
-   WINDOW *cursesWin    = 0;
-   const char *title    = "<C>Pick\n<C>A\n<C>File";
-   const char *label    = "File: ";
    char **info          = 0;
    const char *button[5];
    char vTitle[256];
@@ -42,9 +39,7 @@ int main (int argc, char **argv)
    button[0] = "</5><OK><!5>";
    button[1] = "</5><Cancel><!5>";
 
-   /* Set up CDK. */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start color. */
    initCDKColor ();
@@ -52,6 +47,9 @@ int main (int argc, char **argv)
    /* Get the filename. */
    if (filename == 0)
    {
+      const char *title = "<C>Pick\n<C>A\n<C>File";
+      const char *label = "File:  ";
+
       fSelect = newCDKFselect (cdkscreen,
 			       CDKparamValue (&params, 'X', CENTER),
 			       CDKparamValue (&params, 'Y', CENTER),
@@ -87,7 +85,7 @@ int main (int argc, char **argv)
 	 mesg[0] = "<C>Escape hit. No file selected.";
 	 mesg[1] = "";
 	 mesg[2] = "<C>Press any key to continue.";
-	 popupLabel (cdkscreen, (CDK_CSTRING2) mesg, 3);
+	 popupLabel (cdkscreen, (CDK_CSTRING2)mesg, 3);
 
 	 /* Exit CDK. */
 	 destroyCDKFselect (fSelect);
@@ -103,7 +101,7 @@ int main (int argc, char **argv)
 			   CDKparamValue (&params, 'Y', CENTER),
 			   CDKparamValue (&params, 'H', 20),
 			   CDKparamValue (&params, 'W', -2),
-			   (CDK_CSTRING2) button, 2, A_REVERSE,
+			   (CDK_CSTRING2)button, 2, A_REVERSE,
 			   CDKparamValue (&params, 'N', TRUE),
 			   CDKparamValue (&params, 'S', FALSE));
 
@@ -143,7 +141,7 @@ int main (int argc, char **argv)
    /* Set up the viewer title, and the contents to the widget. */
    sprintf (vTitle, "<C></B/21>Filename:<!21></22>%20s<!22!B>", filename);
    setCDKViewer (example, vTitle,
-		 (CDK_CSTRING2) info, lines,
+		 (CDK_CSTRING2)info, lines,
 		 A_REVERSE, interp_it, TRUE, TRUE);
 
    CDKfreeStrings (info);
@@ -160,7 +158,7 @@ int main (int argc, char **argv)
       mesg[0] = "<C>Escape hit. No Button selected.";
       mesg[1] = "";
       mesg[2] = "<C>Press any key to continue.";
-      popupLabel (cdkscreen, (CDK_CSTRING2) mesg, 3);
+      popupLabel (cdkscreen, (CDK_CSTRING2)mesg, 3);
    }
    else if (example->exitType == vNORMAL)
    {
@@ -168,7 +166,7 @@ int main (int argc, char **argv)
       mesg[0] = temp;
       mesg[1] = "";
       mesg[2] = "<C>Press any key to continue.";
-      popupLabel (cdkscreen, (CDK_CSTRING2) mesg, 3);
+      popupLabel (cdkscreen, (CDK_CSTRING2)mesg, 3);
    }
 
    /* Clean up. */

@@ -1,4 +1,4 @@
-/* $Id: marquee_ex.c,v 1.11 2012/03/22 00:07:35 tom Exp $ */
+/* $Id: marquee_ex.c,v 1.13 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -52,9 +52,7 @@ int main (int argc, char **argv)
    /* *INDENT-OFF* */
    CDKSCREEN	*cdkscreen;
    CDKMARQUEE	*scrollMessage;
-   WINDOW	*cursesWin;
    char		message[1024];
-   char		*currentTime;
    time_t	clck;
 
    CDK_PARAMS   params;
@@ -88,9 +86,7 @@ int main (int argc, char **argv)
       strcat (endAttr, ">");
    }
 
-   /* Set up CDK. */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
    curs_set (0);
 
    /* Start CDK Colors. */
@@ -121,6 +117,8 @@ int main (int argc, char **argv)
    /* Create the marquee message. */
    if (mesg == 0)
    {
+      char *currentTime;
+
       /* Get the current time and chop off the newline. */
       time (&clck);
       currentTime = ctime (&clck);

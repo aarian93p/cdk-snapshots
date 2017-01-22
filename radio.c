@@ -2,9 +2,9 @@
 #include <scroller.h>
 
 /*
- * $Author: Aarian P. Aleahmad $
- * $Date: 2016/01/31 22:16:21 $
- * $Revision: 1.145 $
+ * $Author: tom $
+ * $Date: 2016/11/20 20:14:41 $
+ * $Revision: 1.146 $
  */
 
 /*
@@ -229,10 +229,11 @@ int activateCDKRadio (CDKRADIO *radio, chtype *actions)
    {
       chtype input;
       boolean functionKey;
-      int ret;
 
       for (;;)
       {
+	 int ret;
+
 	 fixCursorPosition (radio);
 	 doupdate();
 	 input = (chtype)getchCDKObject (ObjOf (radio), &functionKey);
@@ -248,12 +249,12 @@ int activateCDKRadio (CDKRADIO *radio, chtype *actions)
    else
    {
       int length = chlen (actions);
-      int j, ret;
+      int j;
 
       /* Inject each character one at a time. */
       for (j = 0; j < length; j++)
       {
-	 ret = injectCDKRadio (radio, actions[j]);
+	 int ret = injectCDKRadio (radio, actions[j]);
 	 if (radio->exitType != vEARLY_EXIT)
 	 {
 	    return ret;
@@ -491,17 +492,14 @@ static void _drawCDKRadio (CDKOBJS *object, boolean Box GCC_UNUSED)
  */
 static void drawCDKRadioList (CDKRADIO *radio, boolean Box)
 {
-   /* *INDENT-EQLS* */
-   int scrollbarAdj     = (radio->scrollbarPlacement == LEFT) ? 1 : 0;
-   int screenPos        = 0;
-   int xpos, ypos;
+   int scrollbarAdj = (radio->scrollbarPlacement == LEFT) ? 1 : 0;
    int j, k;
 
    /* draw the list */
    for (j = 0; j < radio->viewSize; j++)
    {
-      xpos = SCREEN_XPOS (radio, 0);
-      ypos = SCREEN_YPOS (radio, j);
+      int xpos = SCREEN_XPOS (radio, 0);
+      int ypos = SCREEN_YPOS (radio, j);
 
       /* Draw the empty string. */
       writeBlanks (radio->win, xpos, ypos,
@@ -512,7 +510,7 @@ static void drawCDKRadioList (CDKRADIO *radio, boolean Box)
       /* Draw the element in the radio list. */
       if (k < radio->listSize)
       {
-	 screenPos = SCREENPOS (radio, k);
+	 int screenPos = SCREENPOS (radio, k);
 
 	 /* Draw the line. */
 	 writeChtype (radio->win,
@@ -539,8 +537,8 @@ static void drawCDKRadioList (CDKRADIO *radio, boolean Box)
       k = radio->currentItem;
       if (k < radio->listSize)
       {
-	 screenPos = SCREENPOS (radio, k);
-	 ypos = SCREEN_YPOS (radio, radio->currentHigh);
+	 int screenPos = SCREENPOS (radio, k);
+	 int ypos = SCREEN_YPOS (radio, radio->currentHigh);
 
 	 writeChtypeAttrib (radio->win,
 			    (screenPos >= 0) ? screenPos : (1 + scrollbarAdj),
@@ -659,7 +657,7 @@ void setCDKRadio (CDKRADIO *radio, chtype highlight, chtype choiceChar, int Box)
  */
 void setCDKRadioItems (CDKRADIO *radio, CDK_CSTRING2 list, int listSize)
 {
-   int widestItem = -1;
+   int widestItem;
    int j = 0;
 
    widestItem = createList (radio, list, listSize, radio->boxWidth);
@@ -687,10 +685,10 @@ void setCDKRadioItems (CDKRADIO *radio, CDK_CSTRING2 list, int listSize)
 }
 int getCDKRadioItems (CDKRADIO *radio, char **list)
 {
-   int j;
-
    if (list != 0)
    {
+      int j;
+
       for (j = 0; j < radio->listSize; j++)
       {
 	 list[j] = chtype2Char (radio->item[j]);
@@ -890,6 +888,8 @@ static int createList (CDKRADIO *radio, CDK_CSTRING2 list, int listSize, int box
 	  && newPos != 0
 	  && newMode != 0)
       {
+	 int j;
+
 	 /* Each item in the needs to be converted to chtype * */
 	 status = 1;
 	 boxWidth -= (2 + BorderOf (radio));

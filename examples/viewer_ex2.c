@@ -1,4 +1,4 @@
-/* $Id: viewer_ex2.c,v 1.6 2012/03/21 23:43:38 tom Exp $ */
+/* $Id: viewer_ex2.c,v 1.8 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -14,9 +14,6 @@ int main (int argc, char **argv)
    /* *INDENT-EQLS* */
    CDKSCREEN *cdkscreen = 0;
    CDKFSELECT *fSelect  = 0;
-   WINDOW *cursesWin    = 0;
-   const char *title    = "<C>Pick\n<C>A\n<C>File";
-   const char *label    = "File: ";
    const char *button[5];
    char vTitle[256];
    const char *mesg[4];
@@ -38,9 +35,7 @@ int main (int argc, char **argv)
    button[0] = "</5><OK><!5>";
    button[1] = "</5><Cancel><!5>";
 
-   /* Set up CDK. */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start color. */
    initCDKColor ();
@@ -48,6 +43,9 @@ int main (int argc, char **argv)
    /* Get the filename. */
    if (filename == 0)
    {
+      const char *title = "<C>Pick\n<C>A\n<C>File";
+      const char *label = "File: ";
+
       fSelect = newCDKFselect (cdkscreen,
 			       CDKparamValue (&params, 'X', CENTER),
 			       CDKparamValue (&params, 'Y', CENTER),
@@ -83,7 +81,7 @@ int main (int argc, char **argv)
 	 mesg[0] = "<C>Escape hit. No file selected.";
 	 mesg[1] = "";
 	 mesg[2] = "<C>Press any key to continue.";
-	 popupLabel (cdkscreen, (CDK_CSTRING2) mesg, 3);
+	 popupLabel (cdkscreen, (CDK_CSTRING2)mesg, 3);
 
 	 /* Exit CDK. */
 	 destroyCDKFselect (fSelect);
@@ -97,7 +95,7 @@ int main (int argc, char **argv)
    /* Set up the viewer title, and the contents to the widget. */
    sprintf (vTitle, "<C></B/21>Filename:<!21></22>%20s<!22!B>", filename);
 
-   selected = viewFile (cdkscreen, vTitle, filename, (CDK_CSTRING2) button, 2);
+   selected = viewFile (cdkscreen, vTitle, filename, (CDK_CSTRING2)button, 2);
 
    /* Destroy the file selector widget (do not need filename anymore) */
    destroyCDKFselect (fSelect);
@@ -107,7 +105,7 @@ int main (int argc, char **argv)
    mesg[0] = temp;
    mesg[1] = "";
    mesg[2] = "<C>Press any key to continue.";
-   popupLabel (cdkscreen, (CDK_CSTRING2) mesg, 3);
+   popupLabel (cdkscreen, (CDK_CSTRING2)mesg, 3);
 
    /* Clean up. */
    destroyCDKScreen (cdkscreen);

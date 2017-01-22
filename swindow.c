@@ -2,8 +2,8 @@
 
 /*
  * $Author: tom $
- * $Date: 2014/01/02 01:03:04 $
- * $Revision: 1.125 $
+ * $Date: 2016/11/20 20:11:20 $
+ * $Revision: 1.126 $
  */
 
 /*
@@ -49,6 +49,7 @@ CDKSWINDOW *newCDKSwindow (CDKSCREEN *cdkscreen,
 	    { '$',		KEY_END },
    };
    /* *INDENT-ON* */
+
 
    if ((swindow = newCDKObject (CDKSWINDOW, &my_funcs)) == 0)
         return (0);
@@ -807,7 +808,7 @@ static void _drawCDKSwindow (CDKOBJS *object, boolean Box)
  */
 static void drawCDKSwindowList (CDKSWINDOW *swindow, boolean Box GCC_UNUSED)
 {
-   int lastLine, screenPos, x;
+   int lastLine, x;
 
    /* Determine the last line to draw. */
    if (swindow->listSize < swindow->viewSize)
@@ -825,6 +826,8 @@ static void drawCDKSwindowList (CDKSWINDOW *swindow, boolean Box GCC_UNUSED)
    /* Start drawing in each line. */
    for (x = 0; x < lastLine; x++)
    {
+      int screenPos;
+
       if ((x + swindow->currentTop) >= swindow->listSize)
 	 break;
 
@@ -925,13 +928,14 @@ static void _eraseCDKSwindow (CDKOBJS *object)
 int execCDKSwindow (CDKSWINDOW *swindow, const char *command, int insertPos)
 {
    FILE *ps;
-   char temp[BUFSIZ];
    int count = -1;
 
    endwin ();
    /* Try to open the command. */
    if ((ps = popen (command, "r")) != 0)
    {
+      char temp[BUFSIZ];
+
       /* Start reading. */
       while (fgets (temp, sizeof (temp), ps) != 0)
       {
@@ -964,7 +968,7 @@ static void showMessage2 (CDKSWINDOW *swindow,
    mesg[n++] = copyChar (temp);
    mesg[n++] = copyChar (" ");
    mesg[n++] = copyChar ("<C>Press any key to continue.");
-   popupLabel (ScreenOf (swindow), (CDK_CSTRING2) mesg, n);
+   popupLabel (ScreenOf (swindow), (CDK_CSTRING2)mesg, n);
    freeCharList (mesg, (unsigned)n);
    free (temp);
 }
@@ -977,8 +981,6 @@ void saveCDKSwindowInformation (CDKSWINDOW *swindow)
 {
    CDKENTRY *entry = 0;
    char *filename = 0;
-   char temp[256];
-   const char *mesg[10];
    int linesSaved;
 
    /* Create the entry field to get the filename. */
@@ -995,12 +997,14 @@ void saveCDKSwindowInformation (CDKSWINDOW *swindow)
    /* Did they hit escape? */
    if (entry->exitType == vESCAPE_HIT)
    {
+      const char *mesg[10];
+
       /* Popup a message. */
       mesg[0] = "<C></B/5>Save Canceled.";
       mesg[1] = "<C>Escape hit. Scrolling window information not saved.";
       mesg[2] = " ";
       mesg[3] = "<C>Press any key to continue.";
-      popupLabel (ScreenOf (swindow), (CDK_CSTRING2) mesg, 4);
+      popupLabel (ScreenOf (swindow), (CDK_CSTRING2)mesg, 4);
 
       /* Clean up and exit. */
       destroyCDKEntry (entry);
@@ -1021,6 +1025,8 @@ void saveCDKSwindowInformation (CDKSWINDOW *swindow)
    }
    else
    {
+      char temp[256];
+
       /* Yep, let them know how many lines were saved. */
       sprintf (temp, "<C>There were %d lines saved to the file", linesSaved);
       showMessage2 (swindow,
@@ -1043,12 +1049,10 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
 {
    /* *INDENT-EQLS* */
    CDKFSELECT *fselect  = 0;
-   CDKDIALOG *dialog    = 0;
    char *filename       = 0;
    const char *mesg[15];
-   const char *button[5];
    char **fileInfo      = 0;
-   int lines, answer;
+   int lines;
 
    /* Create the file selector to choose the file. */
    fselect = newCDKFselect (ScreenOf (swindow), CENTER, CENTER, 20, 55,
@@ -1069,7 +1073,7 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
       mesg[0] = "<C></B/5>Load Canceled.";
       mesg[1] = " ";
       mesg[2] = "<C>Press any key to continue.";
-      popupLabel (ScreenOf (swindow), (CDK_CSTRING2) mesg, 3);
+      popupLabel (ScreenOf (swindow), (CDK_CSTRING2)mesg, 3);
 
       /* Clean up and exit. */
       destroyCDKFselect (fselect);
@@ -1086,6 +1090,10 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
     */
    if (swindow->listSize > 0)
    {
+      CDKDIALOG *dialog = 0;
+      const char *button[5];
+      int answer;
+
       /* Create the dialog message. */
       mesg[0] = "<C></B/5>Save Information First";
       mesg[1] = "<C>There is information in the scrolling window.";
@@ -1095,8 +1103,8 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
 
       /* Create the dialog widget. */
       dialog = newCDKDialog (ScreenOf (swindow), CENTER, CENTER,
-			     (CDK_CSTRING2) mesg, 3,
-			     (CDK_CSTRING2) button, 2,
+			     (CDK_CSTRING2)mesg, 3,
+			     (CDK_CSTRING2)button, 2,
 			     COLOR_PAIR (2) | A_REVERSE,
 			     TRUE, TRUE, FALSE);
 
@@ -1129,7 +1137,7 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
    cleanCDKSwindow (swindow);
 
    /* Set the new information in the scrolling window. */
-   setCDKSwindow (swindow, (CDK_CSTRING2) fileInfo, lines, ObjOf (swindow)->box);
+   setCDKSwindow (swindow, (CDK_CSTRING2)fileInfo, lines, ObjOf (swindow)->box);
 
    /* Clean up. */
    CDKfreeStrings (fileInfo);
@@ -1142,9 +1150,7 @@ void loadCDKSwindowInformation (CDKSWINDOW *swindow)
  */
 int dumpCDKSwindow (CDKSWINDOW *swindow, const char *filename)
 {
-   /* *INDENT-EQLS* */
-   FILE *outputFile     = 0;
-   char *rawLine        = 0;
+   FILE *outputFile = 0;
    int x;
 
    /* Try to open the file. */
@@ -1156,7 +1162,7 @@ int dumpCDKSwindow (CDKSWINDOW *swindow, const char *filename)
    /* Start writing out the file. */
    for (x = 0; x < swindow->listSize; x++)
    {
-      rawLine = chtype2Char (swindow->list[x]);
+      char *rawLine = chtype2Char (swindow->list[x]);
       fprintf (outputFile, "%s\n", rawLine);
       freeChar (rawLine);
    }

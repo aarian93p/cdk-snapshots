@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.20 2014/11/06 00:17:41 tom Exp $ */
+/* $Id: command.c,v 1.22 2016/12/04 15:22:16 tom Exp $ */
 
 #include <cdk_test.h>
 
@@ -42,17 +42,14 @@ int main (int argc, char **argv)
    CDKSCREEN *cdkscreen         = 0;
    CDKSWINDOW *commandOutput    = 0;
    CDKENTRY *commandEntry       = 0;
-   WINDOW *cursesWin            = 0;
    chtype *convert              = 0;
-   char *command                = 0;
-   char *upper                  = 0;
    const char *prompt           = "</B/24>Command >";
    const char *title            = "<C></B/5>Command Output Window";
    int promptLen                = 0;
    int commandFieldWidth        = 0;
    struct history_st history;
    char temp[600];
-   int ret, junk;
+   int junk;
 
    /* Set up the history. */
    history.current = 0;
@@ -61,6 +58,8 @@ int main (int argc, char **argv)
    /* Check the command line for options. */
    while (1)
    {
+      int ret;
+
       /* Are there any more command line options to parse. */
       if ((ret = getopt (argc, argv, "t:p:")) == -1)
       {
@@ -81,9 +80,7 @@ int main (int argc, char **argv)
       }
    }
 
-   /* Set up CDK. */
-   cursesWin = initscr ();
-   cdkscreen = initCDKScreen (cursesWin);
+   cdkscreen = initCDKScreen (NULL);
 
    /* Start color. */
    initCDKColor ();
@@ -121,6 +118,9 @@ int main (int argc, char **argv)
    /* Do this forever. */
    for (;;)
    {
+      char *command = 0;
+      char *upper;
+
       /* Get the command. */
       drawCDKEntry (commandEntry, ObjOf (commandEntry)->box);
       command = activateCDKEntry (commandEntry, 0);
