@@ -88,7 +88,7 @@ CDKCALENDAR *newCDKCalendar (CDKSCREEN *cdkscreen,
    int xpos              = xplace;
    int ypos              = yplace;
    int x;
-   struct tm *dateInfo;
+   struct tm dateInfo;
    time_t clck;
    const char *dayname   = "Su Mo Tu We Th Fr Sa ";
    /* *INDENT-OFF* */
@@ -163,6 +163,7 @@ CDKCALENDAR *newCDKCalendar (CDKSCREEN *cdkscreen,
    ObjOf (calendar)->acceptsFocus       = TRUE;
    ObjOf (calendar)->inputWindow        = calendar->win;
    calendar->shadow                     = shadow;
+   calendar->local						= FALSE;
 
    calendar->labelWin = subwin (calendar->win,
 				1, calendar->fieldWidth,
@@ -197,12 +198,16 @@ CDKCALENDAR *newCDKCalendar (CDKSCREEN *cdkscreen,
    if ((calendar->day == 0) && (calendar->month == 0) && (calendar->year == 0))
    {
       time (&clck);
-      dateInfo = gmtime (&clck);
+      if(calendar->local){
+    	  localtime_r (&clck, &dateInfo);
+      }else{
+    	  gmtime_r (&clck, &dateInfo);
+      }
 
       /* *INDENT-EQLS* */
-      calendar->day    = dateInfo->tm_mday;
-      calendar->month  = dateInfo->tm_mon + 1;
-      calendar->year   = dateInfo->tm_year + 1900;
+      calendar->day    = dateInfo.tm_mday;
+      calendar->month  = dateInfo.tm_mon + 1;
+      calendar->year   = dateInfo.tm_year + 1900;
    }
 
    /* Verify the dates provided. */
@@ -603,7 +608,7 @@ void setCDKCalendar (CDKCALENDAR *calendar,
 void setCDKCalendarDate (CDKCALENDAR *calendar, int day, int month, int year)
 {
    /* Declare local variables. */
-   struct tm *dateInfo;
+   struct tm dateInfo;
    time_t clck;
 
    /*
@@ -611,13 +616,18 @@ void setCDKCalendarDate (CDKCALENDAR *calendar, int day, int month, int year)
     * the day/month/year values for the calendar.
     */
    time (&clck);
-   dateInfo = gmtime (&clck);
+   if(calendar->local){
+ 	  localtime_r (&clck, &dateInfo);
+   }else{
+ 	  gmtime_r (&clck, &dateInfo);
+   }
+
 
    /* Set the date elements if we need too. */
    /* *INDENT-EQLS* */
-   calendar->day   = (day == -1 ? dateInfo->tm_mday : day);
-   calendar->month = (month == -1 ? dateInfo->tm_mon + 1 : month);
-   calendar->year  = (year == -1 ? dateInfo->tm_year + 1900 : year);
+   calendar->day   = (day == -1 ? dateInfo.tm_mday : day);
+   calendar->month = (month == -1 ? dateInfo.tm_mon + 1 : month);
+   calendar->year  = (year == -1 ? dateInfo.tm_year + 1900 : year);
 
    /* Verify the date information. */
    verifyCalendarDate (calendar);
@@ -1143,26 +1153,37 @@ static int getMonthLength (int year, int month)
 /*
  * This returns what day of the week the month starts on.
  */
+//#define USE_LOCAL_TIME
 static time_t getCurrentTime (CDKCALENDAR *calendar)
 {
-   struct tm Date, *dateInfo;
+   struct tm Date, dateInfo;
    time_t clck;
 
    /* Determine the current time and determine if we are in DST. */
    time (&clck);
-   dateInfo = gmtime (&clck);
+   if(calendar->local){
+ 	   localtime_r (&clck, &dateInfo);
+   }else{
+ 	   gmtime_r (&clck, &dateInfo);
+   }
 
    /* *INDENT-EQLS* Set the tm structure correctly. */
-   Date.tm_sec   = 0;
-   Date.tm_min   = 0;
-   Date.tm_hour  = 0;
-   Date.tm_mday  = calendar->day;
-   Date.tm_mon   = calendar->month - 1;
-   Date.tm_year  = YEAR2INDEX (calendar->year);
-   Date.tm_isdst = dateInfo->tm_isdst;
+   Date.tm_sec    = dateInfo.tm_sec;
+   Date.tm_min    = dateInfo.tm_min;
+   Date.tm_hour   = dateInfo.tm_hour;
+   Date.tm_mday   = calendar->day;
+   Date.tm_mon    = calendar->month - 1;
+   Date.tm_year   = YEAR2INDEX (calendar->year);
+   Date.tm_isdst  = dateInfo.tm_isdst;
+   Date.tm_gmtoff = dateInfo.tm_gmtoff;
+   Date.tm_zone   = dateInfo.tm_zone;
 
    /* Call the mktime function to fill in the holes. */
-   return mktime (&Date);
+   if(calendar->local){
+	   return mktime (&Date);
+   }else{
+	   return timegm (&Date);
+   }
 }
 
 static void _focusCDKCalendar (CDKOBJS *object)

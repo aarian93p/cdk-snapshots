@@ -100,6 +100,7 @@ struct SCalendar {
    char *	DayName;
    char *	MonthName[MAX_MONTHS];
    int		weekBase;	/* starting day of week (Sunday=0, Monday=1) */
+   boolean	local;
 };
 typedef struct SCalendar CDKCALENDAR;
 
